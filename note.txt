@@ -1,0 +1,2 @@
+Hình như app.use() không dùng với middleware dạng class
+Whitelist: true => không cho phép các thuộc tính chưa được khai báo xuất hiện
