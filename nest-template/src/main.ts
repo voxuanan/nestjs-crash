@@ -1,10 +1,10 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerConfig } from './common/config/config.interface';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,8 +13,9 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const swaggerConfig = configService.get<SwaggerConfig>('swagger');
 
-  // Validation
   app.useGlobalPipes(new ValidationPipe({}));
+
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Swagger Api
   if (swaggerConfig.enabled) {
@@ -35,8 +36,8 @@ async function bootstrap() {
     const document = SwaggerModule.createDocument(app, options);
 
     SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
-    const port = configService.get('PORT') ?? 3000;
-    await app.listen(port);
   }
+  const port = configService.get('PORT') ?? 3000;
+  await app.listen(port);
 }
 bootstrap();

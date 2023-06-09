@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import User from './entity/user.entity';
 import CreateUserDto from './dto/createUser.dto';
+import Address from './entity/address.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Address)
+    private addressRepository: Repository<Address>,
   ) {}
 
   async getByEmail(email: string) {
@@ -37,5 +40,9 @@ export class UsersService {
       'User with this id does not exist',
       HttpStatus.NOT_FOUND,
     );
+  }
+
+  async getAllAddressesWithUsers() {
+    return this.addressRepository.find({ relations: ['user'] });
   }
 }

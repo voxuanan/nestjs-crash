@@ -7,10 +7,14 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import CreatePostDto from './dto/createPost.dto';
 import PostsService from './posts.service';
+import JwtAuthenticationGuard from '../authentication/guard/jwt-authentication.guard';
+import RequestWithUser from '../authentication/interface/requestWithUser.interface';
 
 @ApiTags('Post')
 @Controller('posts')
@@ -24,7 +28,7 @@ export default class PostsController {
 
   @ApiParam({
     name: 'id',
-    type: number,
+    type: Number,
   })
   @Get(':id')
   getPostById(@Param('id', ParseIntPipe) id: number) {
@@ -35,13 +39,14 @@ export default class PostsController {
     type: CreatePostDto,
   })
   @Post()
-  async createPost(@Body() post: CreatePostDto) {
-    return this.postsService.createPost(post);
+  // @UseGuards(JwtAuthenticationGuard)
+  async createPost(@Body() post: CreatePostDto, @Req() req: RequestWithUser) {
+    return this.postsService.createPost(post, req.user);
   }
 
   @ApiParam({
     name: 'id',
-    type: number,
+    type: Number,
   })
   @Delete(':id')
   async deletePost(@Param('id', ParseIntPipe) id: number) {

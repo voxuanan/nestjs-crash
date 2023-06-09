@@ -3,6 +3,8 @@ import { PostsModule } from './posts/posts.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
+import { AuthenticationModule } from './authentication/authentication.module';
+import { CategoriesModule } from './categories/categories.module';
 import * as Joi from '@hapi/joi';
 import config from 'src/common/config/config';
 
@@ -24,6 +26,8 @@ import config from 'src/common/config/config';
     }),
     DatabaseModule,
     UsersModule,
+    AuthenticationModule,
+    CategoriesModule,
   ],
   controllers: [],
   providers: [],
