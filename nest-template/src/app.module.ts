@@ -1,14 +1,13 @@
+import * as Joi from '@hapi/joi';
 import { Module } from '@nestjs/common';
-import { PostsModule } from './posts/posts.module';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from './database/database.module';
-import { UsersModule } from './users/users.module';
+import { AppController } from './app.controller';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { CategoriesModule } from './categories/categories.module';
-import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { AppController } from './app.controller';
-import * as Joi from '@hapi/joi';
 import config from './common/config/config';
+import { DatabaseModule } from './database/database.module';
+import { PostsModule } from './posts/posts.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -24,13 +23,19 @@ import config from './common/config/config';
         PORT: Joi.number(),
         JWT_SECRET: Joi.string().required(),
         JWT_EXPIRATION_TIME: Joi.string().required(),
+        CLOUDINARY_NAME: Joi.string().required(),
+        CLOUDINARY_API_KEY: Joi.string().required(),
+        CLOUDINARY_API_SECRET: Joi.string().required(),
+        JWT_ACCESS_TOKEN_SECRET: Joi.string().required(),
+        JWT_ACCESS_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        JWT_REFRESH_TOKEN_SECRET: Joi.string().required(),
+        JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
       }),
     }),
     DatabaseModule,
     UsersModule,
     AuthenticationModule,
     CategoriesModule,
-    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [],

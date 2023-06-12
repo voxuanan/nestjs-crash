@@ -12,6 +12,7 @@ const mockedUser: User = {
     country: 'countryName',
   },
   posts: [],
+  files: [],
 };
 
 export default mockedUser;

@@ -5,22 +5,25 @@ import {
   HttpCode,
   Post,
   Req,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { AuthenticationService } from './authentication.service';
-import RegisterDto from './dto/register.dto';
-import RequestWithUser from './interface/requestWithUser.interface';
-import { LocalAuthenticationGuard } from './guard/localAuthentication.guard';
-import JwtAuthenticationGuard from './guard/jwt-authentication.guard';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { UsersService } from 'src/users/users.service';
+import { AuthenticationService } from './authentication.service';
 import LogInDto from './dto/logIn.dto';
+import RegisterDto from './dto/register.dto';
+import JwtAuthenticationGuard from './guard/jwt-authentication.guard';
+import JwtRefreshGuard from './guard/jwt-refresh.guard';
+import { LocalAuthenticationGuard } from './guard/localAuthentication.guard';
+import RequestWithUser from './interface/requestWithUser.interface';
 
 @ApiTags('authentication')
 @Controller('authentication')
 export class AuthenticationController {
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(
+    private readonly authenticationService: AuthenticationService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @ApiBody({
     type: RegisterDto,
@@ -34,27 +37,31 @@ export class AuthenticationController {
   @UseGuards(LocalAuthenticationGuard)
   @ApiBody({ type: LogInDto })
   @Post('log-in')
-  async logIn(
-    @Req() request: RequestWithUser,
-    @Res({ passthrough: true }) response: Response,
-  ) {
+  async logIn(@Req() request: RequestWithUser) {
     const { user } = request;
-    const cookie = this.authenticationService.getCookieWithJwtToken(user.id);
-    response.setHeader('Set-Cookie', cookie);
-    return response.send(user);
+    const accessTokenCookie =
+      this.authenticationService.getCookieWithJwtAccessToken(user.id);
+    const { cookie: refreshTokenCookie, token: refreshToken } =
+      this.authenticationService.getCookieWithJwtRefreshToken(user.id);
+
+    await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
+
+    request.res.setHeader('Set-Cookie', [
+      accessTokenCookie,
+      refreshTokenCookie,
+    ]);
+    return user;
   }
 
   @UseGuards(JwtAuthenticationGuard)
   @Post('log-out')
-  async logOut(
-    @Req() request: RequestWithUser,
-    @Res({ passthrough: true }) response: Response,
-  ) {
-    response.setHeader(
+  @HttpCode(200)
+  async logOut(@Req() request: RequestWithUser) {
+    await this.usersService.removeRefreshToken(request.user.id);
+    request.res.setHeader(
       'Set-Cookie',
-      this.authenticationService.getCookieForLogOut(),
+      this.authenticationService.getCookiesForLogOut(),
     );
-    return response.sendStatus(200);
   }
 
   @UseGuards(JwtAuthenticationGuard)
@@ -62,5 +69,15 @@ export class AuthenticationController {
   authenticate(@Req() request: RequestWithUser) {
     const user = request.user;
     return user;
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get('refresh')
+  refresh(@Req() request: RequestWithUser) {
+    const accessTokenCookie =
+      this.authenticationService.getCookieWithJwtAccessToken(request.user.id);
+
+    request.res.setHeader('Set-Cookie', accessTokenCookie);
+    return request.user;
   }
 }
