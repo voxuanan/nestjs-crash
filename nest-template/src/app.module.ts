@@ -5,6 +5,8 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { CategoriesModule } from './categories/categories.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { AppController } from './app.controller';
 import * as Joi from '@hapi/joi';
 import config from './common/config/config';
 
@@ -28,8 +30,9 @@ import config from './common/config/config';
     UsersModule,
     AuthenticationModule,
     CategoriesModule,
+    CloudinaryModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule {}

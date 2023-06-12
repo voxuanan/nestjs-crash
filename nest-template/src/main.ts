@@ -37,6 +37,8 @@ async function bootstrap() {
 
     SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
   }
+
+  app.enableCors();
   const port = configService.get('PORT') ?? 3000;
   await app.listen(port);
 }
