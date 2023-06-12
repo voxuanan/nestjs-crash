@@ -1,4 +1,3 @@
-import { number } from '@hapi/joi';
 import {
   Body,
   ClassSerializerInterceptor,
@@ -8,18 +7,20 @@ import {
   Param,
   ParseIntPipe,
   Post,
-  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { GetUser } from 'src/common/decorator/getUser.decorator';
+import User from 'src/users/entity/user.entity';
 import CreatePostDto from './dto/createPost.dto';
 import PostsService from './posts.service';
-import JwtAuthenticationGuard from '../authentication/guard/jwt-authentication.guard';
-import RequestWithUser from '../authentication/interface/requestWithUser.interface';
+import JwtAuthenticationGuard from 'src/authentication/guard/jwt-authentication.guard';
+import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
 
 @ApiTags('Post')
 @UseInterceptors(ClassSerializerInterceptor)
+@UseInterceptors(new UserTransformInterceptor())
 @Controller('posts')
 export default class PostsController {
   constructor(private readonly postsService: PostsService) {}
@@ -42,9 +43,9 @@ export default class PostsController {
     type: CreatePostDto,
   })
   @Post()
-  // @UseGuards(JwtAuthenticationGuard)
-  async createPost(@Body() post: CreatePostDto, @Req() req: RequestWithUser) {
-    return this.postsService.createPost(post, req.user);
+  @UseGuards(JwtAuthenticationGuard)
+  async createPost(@Body() post: CreatePostDto, @GetUser() user: User) {
+    return this.postsService.createPost(post, user);
   }
 
   @ApiParam({

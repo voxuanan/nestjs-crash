@@ -1,15 +1,15 @@
-import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 class UpdatePostDto {
   @IsNumber()
   @IsNotEmpty()
   id: number;
 
-  @IsString()
-  @IsNotEmpty()
-  content: string;
+  @IsString({ each: true })
+  @IsOptional()
+  paragraphs: string[];
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   title: string;
 }
 
