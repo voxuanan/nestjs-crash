@@ -18,10 +18,10 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { GetUser } from 'src/common/decorator/getUser.decorator';
 import User from './entity/user.entity';
 import { UsersService } from './users.service';
-import { UserTransformInterceptor } from './transforms/user.transform';
+// import { UserTransformInterceptor } from './transforms/user.transform';
 
 @ApiTags('User')
-@UseInterceptors(new UserTransformInterceptor())
+// @UseInterceptors(new UserTransformInterceptor())
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 export class UsersController {

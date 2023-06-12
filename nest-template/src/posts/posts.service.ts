@@ -1,21 +1,44 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Post from './entity/post.entity';
-import { Repository } from 'typeorm';
+import { FindManyOptions, In, Like, MoreThan, Repository } from 'typeorm';
 import CreatePostDto from './dto/createPost.dto';
 import UpdatePostDto from './dto/updatePost.dto';
 import PostNotFoundException from './exception/postNotFond.exception';
 import User from '../users/entity/user.entity';
+import PostsSearchService from './postSearch.service';
+import PostSearchBody from './interface/postSearchBody.interface';
 
 @Injectable()
 export default class PostsService {
   constructor(
     @InjectRepository(Post)
     private postsRepository: Repository<Post>,
+    private postsSearchService: PostsSearchService,
   ) {}
 
-  getAllPosts() {
-    return this.postsRepository.find({ relations: ['author'] });
+  async getAllPosts(offset?: number, limit?: number, startId?: number) {
+    const where: FindManyOptions<Post>['where'] = {};
+    let separateCount = 0;
+    if (startId) {
+      where.id = MoreThan(startId);
+      separateCount = await this.postsRepository.count();
+    }
+
+    const [items, count] = await this.postsRepository.findAndCount({
+      where,
+      relations: ['author'],
+      order: {
+        id: 'ASC',
+      },
+      skip: offset,
+      take: limit,
+    });
+
+    return {
+      items,
+      count: startId ? separateCount : count,
+    };
   }
 
   async getPostById(id: number) {
@@ -34,8 +57,39 @@ export default class PostsService {
       ...post,
       author: user,
     });
-    await this.postsRepository.save(newPost);
+    const savedPost = await this.postsRepository.save(newPost);
+    await this.postsSearchService.indexPost(savedPost);
     return newPost;
+  }
+
+  async searchForPosts(
+    text: string,
+    offset?: number,
+    limit?: number,
+    startId?: number,
+  ) {
+    const { results, count } = await this.postsSearchService.search(
+      text,
+      offset,
+      limit,
+      startId,
+    );
+    const ids = results.map((result) => {
+      return (result as unknown as PostSearchBody).id;
+    });
+    if (!ids.length) {
+      return {
+        items: [],
+        count,
+      };
+    }
+    const items = await this.postsRepository.find({
+      where: { id: In(ids) },
+    });
+    return {
+      items,
+      count,
+    };
   }
 
   async updatePost(id: number, post: UpdatePostDto) {

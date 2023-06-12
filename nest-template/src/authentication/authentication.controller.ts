@@ -20,11 +20,11 @@ import { LocalAuthenticationGuard } from './guard/localAuthentication.guard';
 import { GetUser } from 'src/common/decorator/getUser.decorator';
 import User from 'src/users/entity/user.entity';
 import { Request } from 'express';
-import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
+// import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
 
 @ApiTags('authentication')
 @UseInterceptors(ClassSerializerInterceptor)
-@UseInterceptors(new UserTransformInterceptor())
+// @UseInterceptors(new UserTransformInterceptor())
 @Controller('authentication')
 export class AuthenticationController {
   constructor(

@@ -8,6 +8,7 @@ import config from './common/config/config';
 import { DatabaseModule } from './database/database.module';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
+import { SearchModule } from './search/search.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     AuthenticationModule,
     CategoriesModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [],

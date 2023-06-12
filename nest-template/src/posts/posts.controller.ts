@@ -7,27 +7,39 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/common/decorator/getUser.decorator';
 import User from 'src/users/entity/user.entity';
 import CreatePostDto from './dto/createPost.dto';
 import PostsService from './posts.service';
 import JwtAuthenticationGuard from 'src/authentication/guard/jwt-authentication.guard';
-import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
+// import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
+import { PaginationParams } from 'src/utils/interfaces/paginationParams';
 
 @ApiTags('Post')
 @UseInterceptors(ClassSerializerInterceptor)
-@UseInterceptors(new UserTransformInterceptor())
+// @UseInterceptors(new UserTransformInterceptor())
 @Controller('posts')
 export default class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @ApiQuery({ name: 'search', type: String, required: false })
+  @ApiQuery({ name: 'offset', type: Number, required: false })
+  @ApiQuery({ name: 'limit', type: Number, required: false })
+  @ApiQuery({ name: 'startId', type: Number, required: false })
   @Get()
-  getAllPosts() {
-    return this.postsService.getAllPosts();
+  getAllPosts(
+    @Query('search') search: string,
+    @Query() { offset, limit, startId }: PaginationParams,
+  ) {
+    if (search) {
+      return this.postsService.searchForPosts(search, offset, limit, startId);
+    }
+    return this.postsService.getAllPosts(offset, limit, startId);
   }
 
   @ApiParam({

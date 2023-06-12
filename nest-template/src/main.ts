@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { SwaggerConfig } from './common/config/config.interface';
+import { CorsConfig, SwaggerConfig } from './common/config/config.interface';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
@@ -12,6 +12,7 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const swaggerConfig = configService.get<SwaggerConfig>('swagger');
+  const corsConfig = configService.get<CorsConfig>('cors');
 
   app.useGlobalPipes(new ValidationPipe({}));
 
@@ -38,7 +39,10 @@ async function bootstrap() {
     SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
   }
 
-  app.enableCors();
+  if (corsConfig.enabled) {
+    app.enableCors();
+  }
+
   const port = configService.get('PORT') ?? 3000;
   await app.listen(port);
 }
