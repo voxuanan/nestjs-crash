@@ -6,7 +6,7 @@ import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import { CategoriesModule } from './categories/categories.module';
 import * as Joi from '@hapi/joi';
-import config from 'src/common/config/config';
+import config from './common/config/config';
 
 @Module({
   imports: [

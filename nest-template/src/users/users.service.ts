@@ -10,9 +10,9 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
-    @InjectRepository(Address)
-    private addressRepository: Repository<Address>,
-  ) {}
+  ) // @InjectRepository(Address)
+  // private addressRepository: Repository<Address>,
+  {}
 
   async getByEmail(email: string) {
     const user = await this.usersRepository.findOne({ where: { email } });
@@ -42,7 +42,7 @@ export class UsersService {
     );
   }
 
-  async getAllAddressesWithUsers() {
-    return this.addressRepository.find({ relations: ['user'] });
-  }
+  // async getAllAddressesWithUsers() {
+  //   return this.addressRepository.find({ relations: ['user'] });
+  // }
 }
