@@ -1,6 +1,7 @@
 import { number } from '@hapi/joi';
 import {
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
@@ -9,6 +10,7 @@ import {
   Post,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import CreatePostDto from './dto/createPost.dto';
@@ -17,6 +19,7 @@ import JwtAuthenticationGuard from '../authentication/guard/jwt-authentication.g
 import RequestWithUser from '../authentication/interface/requestWithUser.interface';
 
 @ApiTags('Post')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('posts')
 export default class PostsController {
   constructor(private readonly postsService: PostsService) {}

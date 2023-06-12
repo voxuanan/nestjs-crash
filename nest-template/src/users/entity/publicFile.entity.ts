@@ -2,7 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import User from './user.entity';
 
 @Entity()
-class PrivateFile {
+class PublicFile {
   @PrimaryGeneratedColumn()
   public id: number;
 
@@ -12,8 +12,8 @@ class PrivateFile {
   @Column()
   public public_id: string;
 
-  @ManyToOne(() => User, (owner: User) => owner.files)
-  public owner: User;
+  // @ManyToOne(() => User, (owner: User) => owner.files)
+  // public owner: User;
 }
 
-export default PrivateFile;
+export default PublicFile;

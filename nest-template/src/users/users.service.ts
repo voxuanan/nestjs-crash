@@ -10,7 +10,7 @@ import { Repository } from 'typeorm';
 import User from './entity/user.entity';
 import CreateUserDto from './dto/createUser.dto';
 import Address from './entity/address.entity';
-import PrivateFile from './entity/privateFile.entity';
+import PrivateFile from './entity/publicFile.entity';
 import axios from 'axios';
 import { Readable } from 'stream';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
@@ -86,69 +86,37 @@ export class UsersService {
     return this.addressRepository.find({ relations: ['user'] });
   }
 
-  async createFilePrivate(assetId: string, publicId: string, userId: number) {
+  async addAvatar(assetId: string, publicId: string, userId: number) {
     const newFile = this.privateFilesRepository.create({
       asset_id: assetId,
       public_id: publicId,
-      owner: {
-        id: userId,
-      },
     });
     await this.privateFilesRepository.save(newFile);
+    await this.usersRepository.update(userId, {
+      avatar: newFile,
+    });
     return newFile;
   }
 
-  public async getPrivateFile(fileId: number, userId: number) {
-    const fileInfo = await this.privateFilesRepository.findOne({
-      where: {
-        id: fileId,
-      },
-      relations: {
-        owner: true,
-      },
-    });
-    if (fileInfo) {
-      if (fileInfo.owner.id === userId) {
-        const response = await axios.get(
-          this.cloudinaryService.publicImageUrl(fileInfo.public_id),
-          {
-            responseType: 'stream',
-          },
-        );
-        const stream = response.data as Readable;
-        return {
-          stream,
-          info: fileInfo,
-        };
-      }
-      throw new UnauthorizedException();
-    }
-    throw new NotFoundException();
-  }
-
-  async getAllPrivateFiles(userId: number) {
-    const userWithFiles = await this.usersRepository.findOne({
-      where: {
-        id: userId,
-      },
-      relations: {
-        files: true,
-      },
-    });
-
-    if (userWithFiles) {
-      return Promise.all(
-        userWithFiles.files.map(async (file) => {
-          const url = await this.cloudinaryService.generatePresignedUrl(
-            file.public_id,
-          );
-          return {
-            ...file,
-            url,
-          };
-        }),
-      );
-    }
-    throw new NotFoundException('User with this id does not exist');
-  }
+  // public async getPrivateFile(fileId: number, userId: number) {
+  //   const fileInfo = await this.privateFilesRepository.findOne({
+  //     where: {
+  //       id: fileId,
+  //     },
+  //   });
+  //   if (fileInfo) {
+  //     const response = await axios.get(
+  //       this.cloudinaryService.publicImageUrl(fileInfo.public_id),
+  //       {
+  //         responseType: 'stream',
+  //       },
+  //     );
+  //     const stream = response.data as Readable;
+  //     return {
+  //       stream,
+  //       info: fileInfo,
+  //     };
+  //   }
+  //   throw new NotFoundException();
+  // }
 }

@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
 import User from './entity/user.entity';
 import Address from './entity/address.entity';
-import PrivateFile from './entity/privateFile.entity';
+import PrivateFile from './entity/publicFile.entity';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
