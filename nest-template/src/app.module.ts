@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module';
 import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 import { SearchModule } from './search/search.module';
+import { SubscribersModule } from './subscribers/subscribers.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { SearchModule } from './search/search.module';
     AuthenticationModule,
     CategoriesModule,
     SearchModule,
+    SubscribersModule,
   ],
   controllers: [AppController],
   providers: [],

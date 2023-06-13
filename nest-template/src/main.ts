@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CorsConfig, SwaggerConfig } from './common/config/config.interface';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ExcludeNullInterceptor } from './utils/excludeNull.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,7 +16,7 @@ async function bootstrap() {
   const corsConfig = configService.get<CorsConfig>('cors');
 
   app.useGlobalPipes(new ValidationPipe({}));
-
+  app.useGlobalInterceptors(new ExcludeNullInterceptor());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Swagger Api
@@ -42,6 +43,8 @@ async function bootstrap() {
   if (corsConfig.enabled) {
     app.enableCors();
   }
+
+  app.startAllMicroservices();
 
   const port = configService.get('PORT') ?? 3000;
   await app.listen(port);
