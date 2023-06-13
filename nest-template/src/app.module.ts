@@ -12,7 +12,9 @@ import { SearchModule } from './search/search.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { CommentsModule } from './comments/comments.module';
 import { ProductsModule } from './products/products.module';
+import { EmailModule } from './email/email.module';
 import * as redisStore from 'cache-manager-redis-store';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -50,6 +52,7 @@ import * as redisStore from 'cache-manager-redis-store';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     UsersModule,
     AuthenticationModule,
@@ -58,6 +61,7 @@ import * as redisStore from 'cache-manager-redis-store';
     SubscribersModule,
     CommentsModule,
     ProductsModule,
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [],
