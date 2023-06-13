@@ -6,6 +6,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { CorsConfig, SwaggerConfig } from './common/config/config.interface';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { ExcludeNullInterceptor } from './utils/excludeNull.interceptor';
+import { runInCluster } from './utils/runInCluster';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -50,3 +51,4 @@ async function bootstrap() {
   await app.listen(port);
 }
 bootstrap();
+// runInCluster(bootstrap);

@@ -36,6 +36,7 @@ export default class PostsService {
   }
 
   async getAllPosts(offset?: number, limit?: number, startId?: number) {
+    await this.cacheManager.set('test', 'test');
     const where: FindManyOptions<Post>['where'] = {};
     let separateCount = 0;
     if (startId) {
