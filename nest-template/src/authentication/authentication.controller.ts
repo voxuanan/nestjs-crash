@@ -22,7 +22,7 @@ import User from 'src/users/entity/user.entity';
 import { Request } from 'express';
 // import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
 
-@ApiTags('authentication')
+@ApiTags('Authentication')
 @UseInterceptors(ClassSerializerInterceptor)
 // @UseInterceptors(new UserTransformInterceptor())
 @Controller('authentication')
@@ -59,11 +59,12 @@ export class AuthenticationController {
     return user;
   }
 
-  @UseGuards(JwtAuthenticationGuard)
   @Post('log-out')
   @HttpCode(200)
   async logOut(@Req() request: Request, @GetUser() user: User) {
-    await this.usersService.removeRefreshToken(user.id);
+    if (user) {
+      await this.usersService.removeRefreshToken(user.id);
+    }
     request.res.setHeader(
       'Set-Cookie',
       this.authenticationService.getCookiesForLogOut(),

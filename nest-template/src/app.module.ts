@@ -11,6 +11,7 @@ import { UsersModule } from './users/users.module';
 import { SearchModule } from './search/search.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { CommentsModule } from './comments/comments.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { CommentsModule } from './comments/comments.module';
     SearchModule,
     SubscribersModule,
     CommentsModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [],
