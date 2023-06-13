@@ -10,6 +10,7 @@ import { PostsModule } from './posts/posts.module';
 import { UsersModule } from './users/users.module';
 import { SearchModule } from './search/search.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { SubscribersModule } from './subscribers/subscribers.module';
     CategoriesModule,
     SearchModule,
     SubscribersModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [],

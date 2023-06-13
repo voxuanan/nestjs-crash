@@ -1,5 +1,6 @@
 import Category from '../../categories/entity/category';
 import User from '../../users/entity/user.entity';
+import Comment from '../../comments/entity/comment.entity';
 import {
   Column,
   Entity,
@@ -7,6 +8,7 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -28,6 +30,9 @@ class Post {
   @ManyToMany(() => Category, (category: Category) => category.posts)
   @JoinTable()
   public categories: Category[];
+
+  @OneToMany(() => Comment, (comment: Comment) => comment.post)
+  public comments: Comment[];
 }
 
 export default Post;

@@ -18,7 +18,7 @@ import CreatePostDto from './dto/createPost.dto';
 import PostsService from './posts.service';
 import JwtAuthenticationGuard from 'src/authentication/guard/jwt-authentication.guard';
 // import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
-import { PaginationParams } from 'src/utils/interfaces/paginationParams';
+import { PaginationParams } from 'src/utils/types/paginationParams';
 
 @ApiTags('Post')
 @UseInterceptors(ClassSerializerInterceptor)
