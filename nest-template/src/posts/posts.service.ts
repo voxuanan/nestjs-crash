@@ -1,4 +1,10 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  CACHE_MANAGER,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Post from './entity/post.entity';
 import { FindManyOptions, In, Like, MoreThan, Repository } from 'typeorm';
@@ -8,6 +14,8 @@ import PostNotFoundException from './exception/postNotFond.exception';
 import User from '../users/entity/user.entity';
 import PostsSearchService from './postSearch.service';
 import PostSearchBody from './interface/postSearchBody.interface';
+import { GET_POSTS_CACHE_KEY } from './constant/postsCacheKey.constant';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export default class PostsService {
@@ -15,7 +23,17 @@ export default class PostsService {
     @InjectRepository(Post)
     private postsRepository: Repository<Post>,
     private postsSearchService: PostsSearchService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
+
+  async clearCache() {
+    const keys: string[] = await this.cacheManager.store.keys();
+    keys.forEach((key) => {
+      if (key.startsWith(GET_POSTS_CACHE_KEY)) {
+        this.cacheManager.del(key);
+      }
+    });
+  }
 
   async getAllPosts(offset?: number, limit?: number, startId?: number) {
     const where: FindManyOptions<Post>['where'] = {};

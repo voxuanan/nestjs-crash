@@ -1,5 +1,8 @@
 import {
   Body,
+  CacheInterceptor,
+  CacheKey,
+  CacheTTL,
   ClassSerializerInterceptor,
   Controller,
   Delete,
@@ -19,6 +22,8 @@ import PostsService from './posts.service';
 import JwtAuthenticationGuard from 'src/authentication/guard/jwt-authentication.guard';
 // import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
 import { PaginationParams } from 'src/utils/types/paginationParams';
+import { GET_POSTS_CACHE_KEY } from './constant/postsCacheKey.constant';
+import { HttpCacheInterceptor } from 'src/utils/interceptors/httpCache.interceptor';
 
 @ApiTags('Post')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -31,6 +36,9 @@ export default class PostsController {
   @ApiQuery({ name: 'offset', type: Number, required: false })
   @ApiQuery({ name: 'limit', type: Number, required: false })
   @ApiQuery({ name: 'startId', type: Number, required: false })
+  @UseInterceptors(HttpCacheInterceptor)
+  @CacheKey(GET_POSTS_CACHE_KEY)
+  @CacheTTL(120)
   @Get()
   getAllPosts(
     @Query('search') search: string,
