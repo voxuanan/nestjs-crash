@@ -15,6 +15,7 @@ import { ProductsModule } from './products/products.module';
 import { EmailModule } from './email/email.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     CommentsModule,
     ProductsModule,
     EmailModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [],

@@ -32,5 +32,11 @@ import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
     JwtRefreshTokenStrategy,
   ],
   controllers: [AuthenticationController],
+  exports: [
+    AuthenticationService,
+    LocalStrategy,
+    JwtStrategy,
+    JwtRefreshTokenStrategy,
+  ],
 })
 export class AuthenticationModule {}
