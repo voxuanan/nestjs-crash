@@ -10,15 +10,20 @@ import {
 import Address from './address.entity';
 import Post from '../../posts/entity/post.entity';
 import PublicFile from './publicFile.entity';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
+@ObjectType()
 @Entity()
 class User {
+  @Field(() => Int)
   @PrimaryGeneratedColumn()
   public id?: number;
 
+  @Field()
   @Column({ unique: true })
   public email: string;
 
+  @Field()
   @Column()
   public name: string;
 

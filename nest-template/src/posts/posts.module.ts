@@ -5,10 +5,13 @@ import Post from './entity/post.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import PostsSearchService from './postSearch.service';
 import { SearchModule } from 'src/search/search.module';
+import { PostsResolver } from './posts.resolver';
+import { UsersModule } from 'src/users/users.module';
+import PostsLoaders from './loaders/posts.loaders';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post]), SearchModule],
+  imports: [UsersModule, TypeOrmModule.forFeature([Post]), SearchModule],
   controllers: [PostsController],
-  providers: [PostsService, PostsSearchService],
+  providers: [PostsService, PostsSearchService, PostsResolver, PostsLoaders],
 })
 export class PostsModule {}

@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
+import { AuthenticationResolver } from './authentication.resolver';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
     LocalStrategy,
     JwtStrategy,
     JwtRefreshTokenStrategy,
+    AuthenticationResolver,
   ],
   controllers: [AuthenticationController],
   exports: [
@@ -37,6 +39,7 @@ import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
     LocalStrategy,
     JwtStrategy,
     JwtRefreshTokenStrategy,
+    AuthenticationResolver,
   ],
 })
 export class AuthenticationModule {}

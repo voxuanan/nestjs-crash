@@ -16,11 +16,26 @@ import { EmailModule } from './email/email.module';
 import * as redisStore from 'cache-manager-redis-store';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ChatModule } from './chat/chat.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { join } from 'path';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { PubSubModule } from './pub-sub/pub-sub.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [config] }),
     PostsModule,
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      driver: ApolloDriver,
+      useFactory: (configService: ConfigService) => ({
+        playground: Boolean(configService.get('GRAPHQL_PLAYGROUND')),
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        installSubscriptionHandlers: true,
+        cache: 'bounded',
+      }),
+    }),
     ConfigModule.forRoot({
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
@@ -40,6 +55,7 @@ import { ChatModule } from './chat/chat.module';
         JWT_REFRESH_TOKEN_EXPIRATION_TIME: Joi.string().required(),
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
+        GRAPHQL_PLAYGROUND: Joi.number(),
       }),
     }),
     CacheModule.registerAsync({
@@ -64,6 +80,7 @@ import { ChatModule } from './chat/chat.module';
     ProductsModule,
     EmailModule,
     ChatModule,
+    PubSubModule,
   ],
   controllers: [AppController],
   providers: [],

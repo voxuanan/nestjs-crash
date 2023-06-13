@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import User from './entity/user.entity';
 import CreateUserDto from './dto/createUser.dto';
 import Address from './entity/address.entity';
@@ -27,6 +27,12 @@ export class UsersService {
     private privateFilesRepository: Repository<PrivateFile>,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
+
+  async getByIds(ids: number[]) {
+    return this.usersRepository.find({
+      where: { id: In(ids) },
+    });
+  }
 
   async setCurrentRefreshToken(refreshToken: string, userId: number) {
     const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
