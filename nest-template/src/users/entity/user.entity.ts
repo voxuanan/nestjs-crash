@@ -31,6 +31,12 @@ class User {
   @Exclude()
   public password: string;
 
+  @Column({ nullable: true })
+  public twoFactorAuthenticationSecret?: string;
+
+  @Column({ default: false })
+  public isTwoFactorAuthenticationEnabled: boolean;
+
   @Column({
     nullable: true,
   })

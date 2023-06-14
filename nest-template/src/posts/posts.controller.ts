@@ -24,6 +24,7 @@ import JwtAuthenticationGuard from 'src/authentication/guard/jwt-authentication.
 import { PaginationParams } from 'src/utils/types/paginationParams';
 import { GET_POSTS_CACHE_KEY } from './constant/postsCacheKey.constant';
 import { HttpCacheInterceptor } from 'src/utils/interceptors/httpCache.interceptor';
+import JwtTwoFactorGuard from 'src/authentication/guard/jwt-two-factor.guard';
 
 @ApiTags('Post')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -63,7 +64,8 @@ export default class PostsController {
     type: CreatePostDto,
   })
   @Post()
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
+  @UseGuards(JwtTwoFactorGuard)
   async createPost(@Body() post: CreatePostDto, @GetUser() user: User) {
     return this.postsService.createPost(post, user);
   }
