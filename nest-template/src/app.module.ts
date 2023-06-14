@@ -20,6 +20,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PubSubModule } from './pub-sub/pub-sub.module';
+import { OptimizeModule } from './optimize/optimize.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { PubSubModule } from './pub-sub/pub-sub.module';
     EmailModule,
     ChatModule,
     PubSubModule,
+    OptimizeModule,
   ],
   controllers: [AppController],
   providers: [],

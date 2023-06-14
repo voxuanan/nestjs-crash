@@ -12,12 +12,12 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiConsumes, ApiBody, ApiTags } from '@nestjs/swagger';
-import { UploadFileDto } from 'src/app.controller';
 import JwtAuthenticationGuard from 'src/authentication/guard/jwt-authentication.guard';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { GetUser } from 'src/common/decorator/getUser.decorator';
 import User from './entity/user.entity';
 import { UsersService } from './users.service';
+import { UploadFileDto } from 'src/utils/dto/UploadFile.dto';
 // import { UserTransformInterceptor } from './transforms/user.transform';
 
 @ApiTags('User')
