@@ -7,6 +7,8 @@ import { CorsConfig, SwaggerConfig } from './common/config/config.interface';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { ExcludeNullInterceptor } from './utils/excludeNull.interceptor';
 import { runInCluster } from './utils/runInCluster';
+import * as session from 'express-session';
+import * as passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,6 +21,17 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({}));
   app.useGlobalInterceptors(new ExcludeNullInterceptor());
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
+  app.use(
+    session({
+      secret: configService.get('SESSION_SECRET'),
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
 
   // Swagger Api
   if (swaggerConfig.enabled) {

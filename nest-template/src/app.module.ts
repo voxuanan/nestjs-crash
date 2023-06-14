@@ -57,6 +57,7 @@ import { OptimizeModule } from './optimize/optimize.module';
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
         GRAPHQL_PLAYGROUND: Joi.number(),
+        SESSION_SECRET: Joi.string().required(),
       }),
     }),
     CacheModule.registerAsync({

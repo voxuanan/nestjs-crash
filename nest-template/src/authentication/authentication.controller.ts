@@ -20,6 +20,10 @@ import { LocalAuthenticationGuard } from './guard/localAuthentication.guard';
 import { GetUser } from 'src/common/decorator/getUser.decorator';
 import User from 'src/users/entity/user.entity';
 import { Request } from 'express';
+import * as passport from 'passport';
+import { LogInWithCredentialsGuard } from './guard/logInWithCredentialsGuard';
+import { CookieAuthenticationGuard } from './guard/cookieAuthentication.guard';
+import RequestWithUser from './interface/requestWithUser.interface';
 // import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
 
 @ApiTags('Authentication')
@@ -40,45 +44,67 @@ export class AuthenticationController {
     return this.authenticationService.register(registrationData);
   }
 
+  // @HttpCode(200)
+  // @UseGuards(LocalAuthenticationGuard)
+  // @ApiBody({ type: LogInDto })
+  // @Post('log-in')
+  // async logIn(@Req() request: Request, @GetUser() user: User) {
+  //   const accessTokenCookie =
+  //     this.authenticationService.getCookieWithJwtAccessToken(user.id);
+  //   const { cookie: refreshTokenCookie, token: refreshToken } =
+  //     this.authenticationService.getCookieWithJwtRefreshToken(user.id);
+
+  //   await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
+
+  //   request.res.setHeader('Set-Cookie', [
+  //     accessTokenCookie,
+  //     refreshTokenCookie,
+  //   ]);
+
+  //   if (user.isTwoFactorAuthenticationEnabled) {
+  //     return;
+  //   }
+
+  //   return user;
+  // }
+
   @HttpCode(200)
-  @UseGuards(LocalAuthenticationGuard)
-  @ApiBody({ type: LogInDto })
+  @UseGuards(LogInWithCredentialsGuard)
   @Post('log-in')
-  async logIn(@Req() request: Request, @GetUser() user: User) {
-    const accessTokenCookie =
-      this.authenticationService.getCookieWithJwtAccessToken(user.id);
-    const { cookie: refreshTokenCookie, token: refreshToken } =
-      this.authenticationService.getCookieWithJwtRefreshToken(user.id);
-
-    await this.usersService.setCurrentRefreshToken(refreshToken, user.id);
-
-    request.res.setHeader('Set-Cookie', [
-      accessTokenCookie,
-      refreshTokenCookie,
-    ]);
-
-    if (user.isTwoFactorAuthenticationEnabled) {
-      return;
-    }
-
-    return user;
+  async logIn(@Req() request: RequestWithUser) {
+    return request.user;
   }
 
-  @Post('log-out')
+  // @Post('log-out')
+  // @HttpCode(200)
+  // async logOut(@Req() request: Request, @GetUser() user: User) {
+  //   if (user) {
+  //     await this.usersService.removeRefreshToken(user.id);
+  //   }
+  //   request.res.setHeader(
+  //     'Set-Cookie',
+  //     this.authenticationService.getCookiesForLogOut(),
+  //   );
+  // }
+
   @HttpCode(200)
-  async logOut(@Req() request: Request, @GetUser() user: User) {
-    if (user) {
-      await this.usersService.removeRefreshToken(user.id);
-    }
-    request.res.setHeader(
-      'Set-Cookie',
-      this.authenticationService.getCookiesForLogOut(),
-    );
+  @UseGuards(CookieAuthenticationGuard)
+  @Post('log-out')
+  async logOut(@Req() request: Request) {
+    request.logOut({}, () => {});
+    request.session.cookie.maxAge = 0;
   }
 
-  @UseGuards(JwtAuthenticationGuard)
+  // @UseGuards(JwtAuthenticationGuard)
+  // @Get()
+  // authenticate(@GetUser() user: User) {
+  //   return user;
+  // }
+
+  @HttpCode(200)
+  @UseGuards(CookieAuthenticationGuard)
   @Get()
-  authenticate(@GetUser() user: User) {
+  async authenticate(@GetUser() user: User) {
     return user;
   }
 

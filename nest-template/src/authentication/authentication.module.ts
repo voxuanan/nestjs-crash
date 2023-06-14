@@ -11,6 +11,7 @@ import { JwtRefreshTokenStrategy } from './strategy/jwt-refresh-token.strategy';
 import { AuthenticationResolver } from './authentication.resolver';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { TwoFactorAuthenticationController } from './twoFactorAuthentication.controller';
+import { LocalSerializer } from './serializers/local.serializer';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { TwoFactorAuthenticationController } from './twoFactorAuthentication.con
     JwtRefreshTokenStrategy,
     AuthenticationResolver,
     TwoFactorAuthenticationService,
+    LocalSerializer,
   ],
   controllers: [AuthenticationController, TwoFactorAuthenticationController],
   exports: [
@@ -44,6 +46,7 @@ import { TwoFactorAuthenticationController } from './twoFactorAuthentication.con
     JwtRefreshTokenStrategy,
     AuthenticationResolver,
     TwoFactorAuthenticationService,
+    LocalSerializer,
   ],
 })
 export class AuthenticationModule {}
