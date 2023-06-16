@@ -28,6 +28,15 @@ export class UsersService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  markPhoneNumberAsConfirmed(userId: number) {
+    return this.usersRepository.update(
+      { id: userId },
+      {
+        isPhoneNumberConfirmed: true,
+      },
+    );
+  }
+
   async markEmailAsConfirmed(email: string) {
     return this.usersRepository.update(
       { email },

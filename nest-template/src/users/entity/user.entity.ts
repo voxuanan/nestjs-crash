@@ -29,6 +29,14 @@ class User {
 
   @Field()
   @Column()
+  public phoneNumber: string;
+
+  @Field()
+  @Column({ default: false })
+  public isPhoneNumberConfirmed: boolean;
+
+  @Field()
+  @Column()
   public name: string;
 
   @Column()

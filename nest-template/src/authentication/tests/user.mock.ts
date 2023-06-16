@@ -13,6 +13,8 @@ const mockedUser: User = {
   },
   isEmailConfirmed: false,
   posts: [],
+  phoneNumber: '0123456789',
+  isPhoneNumberConfirmed: false,
   isTwoFactorAuthenticationEnabled: false,
 };
 

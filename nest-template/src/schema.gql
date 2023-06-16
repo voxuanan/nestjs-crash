@@ -21,6 +21,8 @@ type User {
   id: Int!
   email: String!
   isEmailConfirmed: Boolean!
+  phoneNumber: String!
+  isPhoneNumberConfirmed: Boolean!
   name: String!
 }
 

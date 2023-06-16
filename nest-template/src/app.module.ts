@@ -21,6 +21,7 @@ import { join } from 'path';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PubSubModule } from './pub-sub/pub-sub.module';
 import { OptimizeModule } from './optimize/optimize.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -61,6 +62,10 @@ import { OptimizeModule } from './optimize/optimize.module';
         JWT_VERIFICATION_TOKEN_SECRET: Joi.string().required(),
         JWT_VERIFICATION_TOKEN_EXPIRATION_TIME: Joi.string().required(),
         EMAIL_CONFIRMATION_URL: Joi.string().required(),
+        TWILIO_ACCOUNT_SID: Joi.string().required(),
+        TWILIO_AUTH_TOKEN: Joi.string().required(),
+        TWILIO_VERIFICATION_SERVICE_SID: Joi.string().required(),
+        TWILIO_SENDER_PHONE_NUMBER: Joi.string().required(),
       }),
     }),
     CacheModule.registerAsync({
@@ -87,6 +92,7 @@ import { OptimizeModule } from './optimize/optimize.module';
     ChatModule,
     PubSubModule,
     OptimizeModule,
+    SmsModule,
   ],
   controllers: [AppController],
   providers: [],
