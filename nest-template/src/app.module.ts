@@ -58,6 +58,9 @@ import { OptimizeModule } from './optimize/optimize.module';
         REDIS_PORT: Joi.number().required(),
         GRAPHQL_PLAYGROUND: Joi.number(),
         SESSION_SECRET: Joi.string().required(),
+        JWT_VERIFICATION_TOKEN_SECRET: Joi.string().required(),
+        JWT_VERIFICATION_TOKEN_EXPIRATION_TIME: Joi.string().required(),
+        EMAIL_CONFIRMATION_URL: Joi.string().required(),
       }),
     }),
     CacheModule.registerAsync({

@@ -24,6 +24,8 @@ import * as passport from 'passport';
 import { LogInWithCredentialsGuard } from './guard/logInWithCredentialsGuard';
 import { CookieAuthenticationGuard } from './guard/cookieAuthentication.guard';
 import RequestWithUser from './interface/requestWithUser.interface';
+import { EmailService } from 'src/email/email.service';
+import ConfirmEmailDto from './dto/confirmEmail.dto';
 // import { UserTransformInterceptor } from 'src/users/transforms/user.transform';
 
 @ApiTags('Authentication')
@@ -34,14 +36,35 @@ export class AuthenticationController {
   constructor(
     private readonly authenticationService: AuthenticationService,
     private readonly usersService: UsersService,
+    private readonly emailService: EmailService,
   ) {}
+
+  @ApiBody({
+    type: ConfirmEmailDto,
+  })
+  @Post('confirm')
+  async confirm(@Body() confirmationData: ConfirmEmailDto) {
+    const email = await this.emailService.decodeConfirmationToken(
+      confirmationData.token,
+    );
+    await this.emailService.confirmEmail(email);
+    return true;
+  }
+
+  @Post('resend-confirmation-link')
+  @UseGuards(JwtAuthenticationGuard)
+  async resendConfirmationLink(@Req() request: RequestWithUser) {
+    await this.emailService.resendConfirmationLink(request.user.id);
+  }
 
   @ApiBody({
     type: RegisterDto,
   })
   @Post('register')
   async register(@Body() registrationData: RegisterDto) {
-    return this.authenticationService.register(registrationData);
+    const user = await this.authenticationService.register(registrationData);
+    await this.emailService.sendVerificationLink(registrationData.email);
+    return user;
   }
 
   @HttpCode(200)

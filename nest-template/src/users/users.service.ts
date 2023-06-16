@@ -28,6 +28,15 @@ export class UsersService {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  async markEmailAsConfirmed(email: string) {
+    return this.usersRepository.update(
+      { email },
+      {
+        isEmailConfirmed: true,
+      },
+    );
+  }
+
   async turnOnTwoFactorAuthentication(userId: number) {
     return this.usersRepository.update(userId, {
       isTwoFactorAuthenticationEnabled: true,

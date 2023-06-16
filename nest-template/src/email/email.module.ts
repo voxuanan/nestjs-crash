@@ -9,6 +9,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as path from 'path';
 import { EmailScheduleService } from './emailSchedule.service';
 import EmailSchedulingController from './emailSchedule.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import EmailSchedulingController from './emailSchedule.controller';
         duration: 1000,
       },
     }),
+    JwtModule.register({}),
+    UsersModule,
   ],
   controllers: [EmailSchedulingController],
   providers: [EmailService, EmailConsumer, EmailScheduleService],

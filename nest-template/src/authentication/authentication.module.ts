@@ -12,6 +12,7 @@ import { AuthenticationResolver } from './authentication.resolver';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { TwoFactorAuthenticationController } from './twoFactorAuthentication.controller';
 import { LocalSerializer } from './serializers/local.serializer';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LocalSerializer } from './serializers/local.serializer';
         },
       }),
     }),
+    EmailModule,
   ],
   providers: [
     AuthenticationService,

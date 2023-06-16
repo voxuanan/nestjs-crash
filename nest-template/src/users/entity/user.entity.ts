@@ -24,6 +24,10 @@ class User {
   public email: string;
 
   @Field()
+  @Column({ default: false })
+  public isEmailConfirmed: boolean;
+
+  @Field()
   @Column()
   public name: string;
 

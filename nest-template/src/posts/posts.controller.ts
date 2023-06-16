@@ -25,6 +25,7 @@ import { PaginationParams } from 'src/utils/types/paginationParams';
 import { GET_POSTS_CACHE_KEY } from './constant/postsCacheKey.constant';
 import { HttpCacheInterceptor } from 'src/utils/interceptors/httpCache.interceptor';
 import JwtTwoFactorGuard from 'src/authentication/guard/jwt-two-factor.guard';
+import { EmailConfirmationGuard } from 'src/email/guard/emailConfirmation.guard';
 
 @ApiTags('Post')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -40,6 +41,7 @@ export default class PostsController {
   @UseInterceptors(HttpCacheInterceptor)
   @CacheKey(GET_POSTS_CACHE_KEY)
   @CacheTTL(120)
+  @UseGuards(JwtAuthenticationGuard)
   @Get()
   getAllPosts(
     @Query('search') search: string,
@@ -63,9 +65,10 @@ export default class PostsController {
   @ApiBody({
     type: CreatePostDto,
   })
+  @UseGuards(EmailConfirmationGuard)
+  @UseGuards(JwtAuthenticationGuard)
   @Post()
-  // @UseGuards(JwtAuthenticationGuard)
-  @UseGuards(JwtTwoFactorGuard)
+  // @UseGuards(JwtTwoFactorGuard)
   async createPost(@Body() post: CreatePostDto, @GetUser() user: User) {
     return this.postsService.createPost(post, user);
   }
@@ -74,6 +77,8 @@ export default class PostsController {
     name: 'id',
     type: Number,
   })
+  @UseGuards(EmailConfirmationGuard)
+  @UseGuards(JwtAuthenticationGuard)
   @Delete(':id')
   async deletePost(@Param('id', ParseIntPipe) id: number) {
     this.postsService.deletePost(id);

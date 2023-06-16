@@ -11,6 +11,7 @@ const mockedUser: User = {
     city: 'cityName',
     country: 'countryName',
   },
+  isEmailConfirmed: false,
   posts: [],
   isTwoFactorAuthenticationEnabled: false,
 };
