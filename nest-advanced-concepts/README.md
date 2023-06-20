@@ -12,5 +12,7 @@ npx madge dist/main.js --image graph.png
 
 nest g mo rewards --skip-import
 
-// Required by piscina package
+// Required by piscina package (tsconfig)
 "esModuleInterop": true,
+
+nest g interceptor common/interceptors/circuit-breaker --no-flat

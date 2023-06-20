@@ -6,17 +6,21 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { CoffeesDataSource, CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
+import { CircuitBreakerInterceptor } from 'src/common/interceptors/circuit-breaker/circuit-breaker.interceptor';
 
+// the circuit breaker kill the process if the error has reach the threehold
+@UseInterceptors(CircuitBreakerInterceptor)
 @Controller('coffees')
 export class CoffeesController {
   constructor(
-    private readonly coffeesService: CoffeesService,
-  ) // private readonly coffeesDataSource: CoffeesDataSource,
-  {}
+    private readonly coffeesService: CoffeesService, // private readonly coffeesDataSource: CoffeesDataSource,
+  ) {}
 
   @Post()
   create(@Body() createCoffeeDto: CreateCoffeeDto) {
@@ -25,6 +29,8 @@ export class CoffeesController {
 
   @Get()
   findAll() {
+    console.log('Simulation ERROR');
+    throw new RequestTimeoutException('Error!');
     return this.coffeesService.findAll();
   }
 
