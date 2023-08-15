@@ -4,7 +4,7 @@ import { Interval } from 'src/scheduler/decorators/interval-key.decorator';
 @IntervalHost
 export class CronService {
   @Interval(1000)
-  everySecon() {
+  everySecond() {
     console.log('Log every second');
   }
 }

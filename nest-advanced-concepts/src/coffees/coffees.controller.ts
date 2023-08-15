@@ -13,6 +13,8 @@ import { CoffeesDataSource, CoffeesService } from './coffees.service';
 import { CreateCoffeeDto } from './dto/create-coffee.dto';
 import { UpdateCoffeeDto } from './dto/update-coffee.dto';
 import { CircuitBreakerInterceptor } from 'src/common/interceptors/circuit-breaker/circuit-breaker.interceptor';
+import { EntityExistsPipe } from 'src/common/pipes/entity-exists/entity-exists.pipe';
+import { Coffee } from './entities/coffee.entity';
 
 // the circuit breaker kill the process if the error has reach the threehold
 @UseInterceptors(CircuitBreakerInterceptor)
@@ -40,7 +42,10 @@ export class CoffeesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCoffeeDto: UpdateCoffeeDto) {
+  update(
+    @Param('id', EntityExistsPipe(Coffee)) id: string,
+    @Body() updateCoffeeDto: UpdateCoffeeDto,
+  ) {
     return this.coffeesService.update(+id, updateCoffeeDto);
   }
 
