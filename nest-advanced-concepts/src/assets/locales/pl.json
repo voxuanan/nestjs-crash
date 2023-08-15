@@ -1,0 +1,6 @@
+{
+  "HELLO": "Czesc {name}",
+  "ERRORS": {
+    "USER_NOT_FOUND": "Uzytkownik {name} nie istnieje"
+  }
+}
