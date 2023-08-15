@@ -34,3 +34,5 @@ npm i @schematics/angular -D```
 config then run `npm run build -- --watch`
 usage `npx @angular-devkit/schematics-cli ./schematics:configurable-module`
 `npx @angular-devkit/schematics-cli ./schematics:configurable-module recipes --debug=false` (recipes is the name of the module)
+
+nest g co payments/payments-webhook --flat
