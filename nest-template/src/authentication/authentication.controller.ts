@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Query,
   Req,
   UseGuards,
   UseInterceptors,
@@ -42,8 +43,8 @@ export class AuthenticationController {
   @ApiBody({
     type: ConfirmEmailDto,
   })
-  @Post('confirm')
-  async confirm(@Body() confirmationData: ConfirmEmailDto) {
+  @Get('confirm')
+  async confirm(@Query() confirmationData: ConfirmEmailDto) {
     const email = await this.emailService.decodeConfirmationToken(
       confirmationData.token,
     );

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/graphql';
 import PostsService from './posts.service';
 import Post from './entity/post.entity';
-import { Inject, UseGuards } from '@nestjs/common';
+import { Global, Inject, UseGuards } from '@nestjs/common';
 import { GraphqlJwtAuthGuard } from 'src/authentication/guard/graphql-jwt-auth.guard';
 import { CreatePostInput } from './inputs/post.input';
 import RequestWithUser from 'src/authentication/interface/requestWithUser.interface';
@@ -53,24 +53,19 @@ export class PostsResolver {
   //   return posts.items;
   // }
 
-  //  Deadling with N+1 problem (way1)
+  //  Dealing with N+1 problem (way1)
   @Query(() => [Post])
   async posts() {
     const posts = await this.postsService.getPosts();
     return posts.items;
   }
 
-  // Deadling with N+1 problem (way1)
+  // Dealing with N+1 problem (way1)
   @ResolveField('author', () => User)
   async getAuthor(@Parent() post: Post) {
     const { authorId } = post;
 
     return this.postsLoaders.batchAuthors.load(authorId);
-  }
-
-  @Subscription(() => Post)
-  postAdded() {
-    return this.pubSub.asyncIterator(POST_ADDED_EVENT);
   }
 
   @Mutation(() => Post)

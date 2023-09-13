@@ -8,10 +8,17 @@ import { SearchModule } from 'src/search/search.module';
 import { PostsResolver } from './posts.resolver';
 import { UsersModule } from 'src/users/users.module';
 import PostsLoaders from './loaders/posts.loaders';
+import { PostsResolverSubscription } from './postsSubscription.resolver';
 
 @Module({
   imports: [UsersModule, TypeOrmModule.forFeature([Post]), SearchModule],
   controllers: [PostsController],
-  providers: [PostsService, PostsSearchService, PostsResolver, PostsLoaders],
+  providers: [
+    PostsService,
+    PostsSearchService,
+    PostsResolver,
+    PostsResolverSubscription,
+    PostsLoaders,
+  ],
 })
 export class PostsModule {}

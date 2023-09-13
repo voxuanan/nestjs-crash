@@ -43,6 +43,9 @@ class User {
   @Exclude()
   public password: string;
 
+  @Column()
+  public stripeCustomerId: string;
+
   @Column({ nullable: true })
   public twoFactorAuthenticationSecret?: string;
 

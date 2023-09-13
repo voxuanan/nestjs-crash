@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  Scope,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Post from './entity/post.entity';
@@ -17,7 +18,7 @@ import PostSearchBody from './interface/postSearchBody.interface';
 import { GET_POSTS_CACHE_KEY } from './constant/postsCacheKey.constant';
 import { Cache } from 'cache-manager';
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export default class PostsService {
   constructor(
     @InjectRepository(Post)

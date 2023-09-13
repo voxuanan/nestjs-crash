@@ -15,6 +15,7 @@ import axios from 'axios';
 import { Readable } from 'stream';
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import * as bcrypt from 'bcrypt';
+import { StripeService } from 'src/stripe/stripe.service';
 
 @Injectable()
 export class UsersService {
@@ -26,6 +27,7 @@ export class UsersService {
     @InjectRepository(PrivateFile)
     private privateFilesRepository: Repository<PrivateFile>,
     private readonly cloudinaryService: CloudinaryService,
+    private stripeService: StripeService,
   ) {}
 
   markPhoneNumberAsConfirmed(userId: number) {
@@ -102,7 +104,15 @@ export class UsersService {
   }
 
   async create(userData: CreateUserDto) {
-    const newUser = await this.usersRepository.create(userData);
+    const stripeCustomer = await this.stripeService.createCustomer(
+      userData.name,
+      userData.email,
+    );
+
+    const newUser = await this.usersRepository.create({
+      ...userData,
+      stripeCustomerId: stripeCustomer.id,
+    });
     await this.usersRepository.save(newUser);
     return newUser;
   }

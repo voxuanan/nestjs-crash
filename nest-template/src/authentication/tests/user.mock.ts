@@ -16,6 +16,7 @@ const mockedUser: User = {
   phoneNumber: '0123456789',
   isPhoneNumberConfirmed: false,
   isTwoFactorAuthenticationEnabled: false,
+  stripeCustomerId: 'string',
 };
 
 export default mockedUser;

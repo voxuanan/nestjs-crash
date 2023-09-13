@@ -22,6 +22,8 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { PubSubModule } from './pub-sub/pub-sub.module';
 import { OptimizeModule } from './optimize/optimize.module';
 import { SmsModule } from './sms/sms.module';
+import { StripeService } from './stripe/stripe.service';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -66,6 +68,9 @@ import { SmsModule } from './sms/sms.module';
         TWILIO_AUTH_TOKEN: Joi.string().required(),
         TWILIO_VERIFICATION_SERVICE_SID: Joi.string().required(),
         TWILIO_SENDER_PHONE_NUMBER: Joi.string().required(),
+        STRIPE_SECRET_KEY: Joi.string(),
+        STRIPE_CURRENCY: Joi.string(),
+        FRONTEND_URL: Joi.string(),
       }),
     }),
     CacheModule.registerAsync({
@@ -93,8 +98,9 @@ import { SmsModule } from './sms/sms.module';
     PubSubModule,
     OptimizeModule,
     SmsModule,
+    StripeModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [StripeService],
 })
 export class AppModule {}

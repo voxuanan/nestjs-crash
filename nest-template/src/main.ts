@@ -54,9 +54,13 @@ async function bootstrap() {
     SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
   }
 
-  if (corsConfig.enabled) {
-    app.enableCors();
-  }
+  // if (corsConfig.enabled) {
+  //   app.enableCors();
+  // }
+  app.enableCors({
+    origin: configService.get('FRONTEND_URL'),
+    credentials: true,
+  });
 
   app.startAllMicroservices();
 

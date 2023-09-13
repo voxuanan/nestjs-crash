@@ -28,7 +28,7 @@ import { UsersModule } from 'src/users/users.module';
           },
         },
         defaults: {
-          from: `"<${configService.get('MAIL_NAME')}" <${configService.get(
+          from: `"${configService.get('MAIL_NAME')}" <${configService.get(
             'MAIL_FROM',
           )}>`,
         },
