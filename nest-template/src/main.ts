@@ -9,14 +9,25 @@ import { ExcludeNullInterceptor } from './utils/excludeNull.interceptor';
 import { runInCluster } from './utils/runInCluster';
 import * as session from 'express-session';
 import * as passport from 'passport';
+import rawBodyMiddleware from './common/middleware/rawBody.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.use(rawBodyMiddleware());
   app.use(cookieParser());
 
   const configService = app.get(ConfigService);
   const swaggerConfig = configService.get<SwaggerConfig>('swagger');
   const corsConfig = configService.get<CorsConfig>('cors');
+
+  // if (corsConfig.enabled) {
+  //   app.enableCors();
+  // }
+  app.enableCors({
+    origin: configService.get('FRONTEND_URL'),
+    credentials: true,
+  });
 
   app.useGlobalPipes(new ValidationPipe({}));
   app.useGlobalInterceptors(new ExcludeNullInterceptor());
@@ -53,14 +64,6 @@ async function bootstrap() {
 
     SwaggerModule.setup(swaggerConfig.path || 'api', app, document);
   }
-
-  // if (corsConfig.enabled) {
-  //   app.enableCors();
-  // }
-  app.enableCors({
-    origin: configService.get('FRONTEND_URL'),
-    credentials: true,
-  });
 
   app.startAllMicroservices();
 

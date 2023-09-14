@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import CreateChargeDto from './dto/createCharge.dto';
-import { StripeService } from 'src/stripe/stripe.service';
-import RequestWithUser from 'src/authentication/interface/requestWithUser.interface';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import JwtAuthenticationGuard from 'src/authentication/guard/jwt-authentication.guard';
+import RequestWithUser from 'src/authentication/interface/requestWithUser.interface';
+import { StripeService } from 'src/stripe/stripe.service';
+import CreateChargeDto from './dto/createCharge.dto';
 
 @Controller('payment')
 export class PaymentController {

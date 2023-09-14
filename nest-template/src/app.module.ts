@@ -71,6 +71,8 @@ import { StripeModule } from './stripe/stripe.module';
         STRIPE_SECRET_KEY: Joi.string(),
         STRIPE_CURRENCY: Joi.string(),
         FRONTEND_URL: Joi.string(),
+        MONTHLY_SUBSCRIPTION_PRICE_ID: Joi.string(),
+        STRIPE_WEBHOOK_SECRET: Joi.string(),
       }),
     }),
     CacheModule.registerAsync({

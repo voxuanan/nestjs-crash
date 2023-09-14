@@ -47,6 +47,9 @@ class User {
   public stripeCustomerId: string;
 
   @Column({ nullable: true })
+  public monthlySubscriptionStatus?: string;
+
+  @Column({ nullable: true })
   public twoFactorAuthenticationSecret?: string;
 
   @Column({ default: false })
