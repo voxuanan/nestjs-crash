@@ -73,6 +73,10 @@ import { StripeModule } from './stripe/stripe.module';
         FRONTEND_URL: Joi.string(),
         MONTHLY_SUBSCRIPTION_PRICE_ID: Joi.string(),
         STRIPE_WEBHOOK_SECRET: Joi.string(),
+        FIREBASE_PRIVATE_KEY: Joi.string(),
+        FIREBASE_CLIENT_EMAIL: Joi.string(),
+        FIREBASE_PROJECT_ID: Joi.string(),
+        FIREBASE_DATABASE_URL: Joi.string(),
       }),
     }),
     CacheModule.registerAsync({

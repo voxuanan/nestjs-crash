@@ -13,6 +13,8 @@ import { TwoFactorAuthenticationService } from './twoFactorAuthentication.servic
 import { TwoFactorAuthenticationController } from './twoFactorAuthentication.controller';
 import { LocalSerializer } from './serializers/local.serializer';
 import { EmailModule } from 'src/email/email.module';
+import { FirebaseAuthenticationController } from './firebaseAuthentication.controller';
+import { FirebaseAuthenticationService } from './firebaseAuthentication.service';
 
 @Module({
   imports: [
@@ -39,8 +41,13 @@ import { EmailModule } from 'src/email/email.module';
     AuthenticationResolver,
     TwoFactorAuthenticationService,
     LocalSerializer,
+    FirebaseAuthenticationService,
   ],
-  controllers: [AuthenticationController, TwoFactorAuthenticationController],
+  controllers: [
+    AuthenticationController,
+    TwoFactorAuthenticationController,
+    FirebaseAuthenticationController,
+  ],
   exports: [
     AuthenticationService,
     LocalStrategy,
@@ -49,6 +56,7 @@ import { EmailModule } from 'src/email/email.module';
     AuthenticationResolver,
     TwoFactorAuthenticationService,
     LocalSerializer,
+    FirebaseAuthenticationService,
   ],
 })
 export class AuthenticationModule {}

@@ -70,6 +70,7 @@
     "cookie-parser": "^1.4.6",
     "dataloader": "^2.2.2",
     "express-session": "^1.17.3",
+    "firebase-admin": "^11.10.1",
     "graphql": "^16.6.0",
     "graphql-parse-resolve-info": "^4.13.0",
     "graphql-redis-subscriptions": "^2.6.0",

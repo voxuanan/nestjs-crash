@@ -17,6 +17,8 @@ const mockedUser: User = {
   isPhoneNumberConfirmed: false,
   isTwoFactorAuthenticationEnabled: false,
   stripeCustomerId: 'string',
+  firebaseUid: null,
+  isRegisterWithFirebase: false,
 };
 
 export default mockedUser;

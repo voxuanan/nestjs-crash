@@ -28,8 +28,8 @@ class User {
   public isEmailConfirmed: boolean;
 
   @Field()
-  @Column()
-  public phoneNumber: string;
+  @Column({ nullable: true })
+  public phoneNumber?: string;
 
   @Field()
   @Column({ default: false })
@@ -39,9 +39,15 @@ class User {
   @Column()
   public name: string;
 
-  @Column()
+  @Column({ unique: true, nullable: true })
+  public firebaseUid?: string;
+
+  @Column({ nullable: true })
   @Exclude()
-  public password: string;
+  public password?: string;
+
+  @Column({ default: false })
+  public isRegisterWithFirebase: boolean;
 
   @Column()
   public stripeCustomerId: string;

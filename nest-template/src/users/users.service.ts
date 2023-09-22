@@ -30,6 +30,26 @@ export class UsersService {
     private stripeService: StripeService,
   ) {}
 
+  async createWithGoogle(
+    firebaseUid: string,
+    email: string,
+    name: string,
+    phoneNumber: string = null,
+  ) {
+    const stripeCustomer = await this.stripeService.createCustomer(name, email);
+
+    const newUser = await this.usersRepository.create({
+      firebaseUid,
+      email,
+      name,
+      stripeCustomerId: stripeCustomer.id,
+      isRegisterWithFirebase: true,
+      phoneNumber,
+    });
+    await this.usersRepository.save(newUser);
+    return newUser;
+  }
+
   markPhoneNumberAsConfirmed(userId: number) {
     return this.usersRepository.update(
       { id: userId },
