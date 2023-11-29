@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppEntity } from './entities/app.entity';
+import { TestModule } from 'src/modules/test/test.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AppEntity } from './entities/app.entity';
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([AppEntity]),
+    TestModule,
   ],
   controllers: [AppController],
   providers: [AppService],
