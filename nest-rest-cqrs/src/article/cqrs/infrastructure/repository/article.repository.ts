@@ -15,11 +15,6 @@ export class ArticleRepository implements IArticleRepository {
   @Inject() private readonly helperStringService: HelperStringService;
 
   async newId(): Promise<string> {
-    console.log(
-      '111111111111111111111111111111111111111111111111',
-      this.articleFactory,
-      this.helperStringService,
-    );
     return this.helperStringService.random(16);
   }
 

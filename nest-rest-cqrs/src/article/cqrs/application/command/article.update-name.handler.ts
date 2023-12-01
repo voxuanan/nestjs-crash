@@ -1,13 +1,13 @@
 import { Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Transactional } from 'src/common/request-storage/transactional';
-import { CreateArticleCommand } from './article.create.command';
 import { ArticleRepository } from '../../infrastructure/repository/article.repository';
 import { ArticleFactory } from '../../domain/article.factory';
+import { UpdateNameArticleCommand } from './article.update-name.command';
 
-@CommandHandler(CreateArticleCommand)
-export class CreateArticleHandler
-  implements ICommandHandler<CreateArticleCommand, void>
+@CommandHandler(UpdateNameArticleCommand)
+export class UpdateNameArticleHandler
+  implements ICommandHandler<UpdateNameArticleCommand, void>
 {
   constructor(
     private readonly articleRepository: ArticleRepository,
@@ -15,11 +15,12 @@ export class CreateArticleHandler
   ) {}
 
   @Transactional()
-  async execute(command: CreateArticleCommand): Promise<void> {
-    const article = this.articleFactory.create({
-      ...command,
-      id: await this.articleRepository.newId(),
-    });
+  async execute(command: UpdateNameArticleCommand): Promise<void> {
+    const article = await this.articleRepository.findById(command.articleId);
+
+    if (!article) throw new NotFoundException('not found');
+
+    article.updateName(command.name);
 
     await this.articleRepository.save(article);
 

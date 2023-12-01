@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Joi from 'joi';
+import { ArticleEntity } from 'src/article/cqrs/infrastructure/entity/article.entity';
 import configs from 'src/configs';
 import {
   DataSource,
@@ -13,7 +15,7 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { HelperModule } from './helper/helper.module';
-import { ArticleEntity } from 'src/article/cqrs/infrastructure/entity/article.entity';
+import { CqrsModule } from '@nestjs/cqrs';
 
 interface WriteConnection {
   readonly startTransaction: (
@@ -96,6 +98,9 @@ export let readConnection = {} as ReadConnection;
         return Promise.resolve(dataSource);
       },
     }),
+    ScheduleModule.forRoot(),
+    CqrsModule,
+    HelperModule,
   ],
 })
 export class CommonModule {}
