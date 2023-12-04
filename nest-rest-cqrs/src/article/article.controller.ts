@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Get,
   HttpStatus,
-  Inject,
   Param,
   Post,
+  Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import {
@@ -15,11 +17,18 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { FindOneInputDTO } from '../common/helper/dtos/find-one.dto';
 import { CreateArticleCommand } from './cqrs/application/command/article.create.command';
 import { UpdateNameArticleCommand } from './cqrs/application/command/article.update-name.command';
-import { CreateArticleRequestDTO } from './interfaces/dto/article.create.interface';
-import { FindOneInputDto } from './interfaces/dto/article.find-one.dto';
-import { UpdateNameArticleRequestDTO } from './interfaces/dto/article.update-name.dto';
+import { CreateArticleRequestDTO } from './interfaces/dtos/article.create.dto';
+import { UpdateNameArticleRequestDTO } from './interfaces/dtos/article.update-name.dto';
+import { ArticleFindOneSerializer } from './interfaces/serializers/article.find-one.serializer';
+import { FindOneArticleQuery } from './cqrs/application/query/article.find-one.query';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+import { FindPaginationInputDTO } from 'src/common/helper/dtos/find-pagination.dto';
+import { ArticleFindSerializer } from './interfaces/serializers/article.find.serializer';
+import { FindArticleQuery } from './cqrs/application/query/article.find.query';
+import { GetTotalArticleQuery } from './cqrs/application/query/article.get-total.query';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -28,6 +37,41 @@ export class ArticleController {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
+
+  @Get('')
+  @UseInterceptors(CacheInterceptor)
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @ApiBadRequestResponse({})
+  @ApiInternalServerErrorResponse({})
+  async findAccounts(
+    @Query() querystring: FindPaginationInputDTO,
+  ): Promise<ArticleFindSerializer> {
+    const query = new FindArticleQuery(querystring);
+    return {
+      data: await this.queryBus.execute(query),
+      pagination: {
+        total: await this.queryBus.execute(new GetTotalArticleQuery()),
+        skip: +querystring.skip,
+        take: +querystring.take,
+      },
+    };
+  }
+
+  @Get(':id')
+  @UseInterceptors(CacheInterceptor)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: ArticleFindOneSerializer,
+  })
+  @ApiBadRequestResponse({})
+  @ApiInternalServerErrorResponse({})
+  async findById(
+    @Param() param: FindOneInputDTO,
+  ): Promise<ArticleFindOneSerializer> {
+    return this.queryBus.execute(new FindOneArticleQuery(param.id));
+  }
 
   @Post()
   @ApiResponse({
@@ -40,7 +84,7 @@ export class ArticleController {
     await this.commandBus.execute(command);
   }
 
-  @Post(':articleId')
+  @Post(':id')
   @ApiResponse({
     status: HttpStatus.CREATED,
   })
@@ -49,11 +93,11 @@ export class ArticleController {
   @ApiUnprocessableEntityResponse({})
   @ApiInternalServerErrorResponse({})
   async updateName(
-    @Param() param: FindOneInputDto,
+    @Param() param: FindOneInputDTO,
     @Body() body: UpdateNameArticleRequestDTO,
   ): Promise<void> {
     await this.commandBus.execute(
-      new UpdateNameArticleCommand(param.articleId, body.name),
+      new UpdateNameArticleCommand(param.id, body.name),
     );
   }
 }

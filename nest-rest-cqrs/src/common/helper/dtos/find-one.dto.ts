@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class FindOneInputDto {
+export class FindOneInputDTO {
   @IsNotEmpty()
   @IsString()
-  articleId: string;
+  id: string;
 }

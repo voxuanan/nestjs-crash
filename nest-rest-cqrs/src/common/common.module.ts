@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CqrsModule } from '@nestjs/cqrs';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Joi from 'joi';
@@ -15,7 +16,6 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { HelperModule } from './helper/helper.module';
-import { CqrsModule } from '@nestjs/cqrs';
 
 interface WriteConnection {
   readonly startTransaction: (
