@@ -1,6 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Transactional } from 'src/common/request-storage/transactional';
 import { TestLogCommand } from './test.log.command';
+var clc = require('cli-color');
 
 @CommandHandler(TestLogCommand)
 export class TestLogHandler implements ICommandHandler<TestLogCommand, void> {
@@ -8,6 +9,6 @@ export class TestLogHandler implements ICommandHandler<TestLogCommand, void> {
 
   @Transactional()
   async execute(command: TestLogCommand): Promise<void> {
-    console.log('TestLogHandler', command);
+    console.log(clc.blue('TestLogHandler', command));
   }
 }

@@ -15,6 +15,8 @@ import { ArticleQuery } from './cqrs/infrastructure/query/article.query';
 import { ArticleRepository } from './cqrs/infrastructure/repository/article.repository';
 import { FindArticleHandler } from './cqrs/application/query/article.find.handler';
 import { GetTotalArticleHandler } from './cqrs/application/query/article.get-total.handler';
+import { ArticleSagas } from './cqrs/infrastructure/article.saga';
+import { EventSourcingModule } from 'src/common/event-sourcing/event-sourcing.module';
 
 const infrastructure: Provider[] = [ArticleRepository, ArticleQuery];
 
@@ -37,9 +39,16 @@ const domain = [ArticleFactory];
     KafkaModule,
     HelperModule,
     TypeOrmModule.forFeature([ArticleEntity]),
+    EventSourcingModule,
     CqrsModule,
   ],
   controllers: [ArticleController, ArticleIntegrationController],
-  providers: [Logger, ...infrastructure, ...application, ...domain],
+  providers: [
+    Logger,
+    ...infrastructure,
+    ...application,
+    ...domain,
+    ArticleSagas,
+  ],
 })
 export class ArticleModule {}

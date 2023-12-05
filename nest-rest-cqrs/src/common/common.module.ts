@@ -16,6 +16,8 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { HelperModule } from './helper/helper.module';
+import { EventSourcingEntity } from './event-sourcing/entity/event-sourcing.entity';
+import { EventProcessingAttemptEntity } from './event-sourcing/entity/event-processcing-attempt.entity';
 
 interface WriteConnection {
   readonly startTransaction: (
@@ -72,7 +74,11 @@ export let readConnection = {} as ReadConnection;
       useFactory: (configService: ConfigService) => {
         return {
           autoLoadEntities: true,
-          entities: [ArticleEntity],
+          entities: [
+            ArticleEntity,
+            EventSourcingEntity,
+            EventProcessingAttemptEntity,
+          ],
           type: 'mysql',
           host: configService.get<string>('database.host'),
           port: configService.get<number>('database.port'),

@@ -4,10 +4,16 @@ import {
   PrimaryColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 
 @Entity()
-export class ArticleEntity {
+export class ArticleEntity extends BaseEntity {
+  constructor(partial: Partial<ArticleEntity>) {
+    super();
+    Object.assign(this, partial);
+  }
+
   @PrimaryColumn({ type: String })
   id: string;
 

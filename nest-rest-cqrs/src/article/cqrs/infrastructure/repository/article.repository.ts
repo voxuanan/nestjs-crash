@@ -40,11 +40,11 @@ export class ArticleRepository implements IArticleRepository {
 
   private modelToEntity(model: IArticle): ArticleEntity {
     const properties = JSON.parse(JSON.stringify(model)) as ArticleProperties;
-    return {
+    return new ArticleEntity({
       ...properties,
       id: properties.id,
       createdAt: properties.createdAt,
-    };
+    });
   }
 
   private entityToModel(entity: ArticleEntity): IArticle {

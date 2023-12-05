@@ -12,9 +12,9 @@ export class KafkaTopicsConsumer implements OnModuleInit {
         topic: { topic },
         config: { groupId: topic },
         onMessage: async (message) => {
-          console.log({
-            value: message.value.toString(),
-          });
+          // console.log({
+          //   value: message.value.toString(),
+          // });
         },
       });
     }

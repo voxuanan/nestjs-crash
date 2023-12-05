@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArticleModule } from './article/article.module';
 import { CommonModule } from './common/common.module';
+import { EventSourcingModule } from './common/event-sourcing/event-sourcing.module';
 import { KafkaModule } from './common/kafka/kafka.module';
 import { RequestStorageMiddleware } from './common/request-storage/request-storage.middleware';
 import { LogModule } from './test/cqrs/application/command/test.module';
@@ -14,6 +15,7 @@ import { LogModule } from './test/cqrs/application/command/test.module';
       isGlobal: true,
     }),
     CommonModule,
+    EventSourcingModule,
     KafkaModule,
     ArticleModule,
     LogModule,
