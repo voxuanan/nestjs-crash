@@ -1,0 +1,13 @@
+FROM node:lts-alpine
+
+WORKDIR /app
+EXPOSE 3000
+
+COPY package.json package-lock.json ./
+
+RUN mkdir data
+RUN set -x && npm install
+
+COPY . .
+
+CMD [ "npm", "start" ]

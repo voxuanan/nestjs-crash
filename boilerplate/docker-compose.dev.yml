@@ -1,0 +1,59 @@
+version: '3.7'
+
+services:
+    service:
+        build:
+            context: .
+            dockerfile: dockerfile
+        container_name: service
+        hostname: service
+        ports:
+            - 3000:3000
+        env_file: .env
+        networks:
+            - nestjs-boilerplate
+        volumes:
+            - ./src/:/app/src/
+            - .env/:/app/.env
+        restart: unless-stopped
+        depends_on:
+            - mysqldb
+
+    mysqldb:
+        container_name: mysqldb
+        image: mysql:latest
+        restart: always
+        ports:
+            - '3306:3306'
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456
+            MYSQL_DATABASE: test
+            MYSQL_USER: test
+            MYSQL_PASSWORD: 123456
+        command: mysqld --innodb-default-row-format=DYNAMIC --innodb-log-file-size=256M --innodb-strict-mode=0 --character-set-server=latin1 --collation-server=latin1_swedish_ci
+        networks:
+            - nestjs-boilerplate
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        restart: always
+        ports:
+            - 8080:80
+        environment:
+            PMA_HOST: mysqldb
+            MYSQL_ROOT_PASSWORD: 123456
+        networks:
+            - nestjs-boilerplate
+
+    redis:
+        image: redis:alpine
+        ports:
+            - '6379:6379'
+        container_name: redis
+        restart: always
+        networks:
+            - nestjs-boilerplate
+
+networks:
+    nestjs-boilerplate:
+        driver: bridge

@@ -1,0 +1,20 @@
+{
+    "collection": "@nestjs/schematics",
+    "sourceRoot": "src",
+    "compilerOptions": {
+        "plugins": ["@nestjs/swagger"],
+        "assets": [
+            {
+                "include": "languages/**/*",
+                "outDir": "dist/src"
+            },
+            {
+                "include": "common/mail/templates/**/*",
+                "outDir": "dist/src"
+            }
+        ],
+        "webpack": false,
+        "deleteOutDir": true,
+        "watchAssets": true
+    }
+}

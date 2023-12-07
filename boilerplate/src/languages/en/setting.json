@@ -1,0 +1,11 @@
+{
+    "list": "List Setting Success.",
+    "get": "Get Setting Success.",
+    "update": "Update Succeed",
+    "error": {
+        "notFound": "Setting not found",
+        "valueNotAllowed": "Setting value not allowed",
+        "notPublic": "This setting is not public",
+        "notBelongToUser": "This setting does not belong to you"
+    }
+}
