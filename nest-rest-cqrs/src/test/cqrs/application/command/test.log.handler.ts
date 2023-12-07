@@ -9,6 +9,6 @@ export class TestLogHandler implements ICommandHandler<TestLogCommand, void> {
 
   @Transactional()
   async execute(command: TestLogCommand): Promise<void> {
-    console.log(clc.blue('TestLogHandler', command));
+    console.log(clc.blue('TestLogHandler', JSON.stringify(command)));
   }
 }

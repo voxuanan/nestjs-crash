@@ -12,7 +12,6 @@ export function prepareEvent(
       return new UpdateNameArticleEvent(
         (event.data as unknown as any).articleId,
         (event.data as unknown as any).name,
-        event.processAttempt.id,
       );
     default:
       throw new Error(`Cant find event for: ${event.name}`);

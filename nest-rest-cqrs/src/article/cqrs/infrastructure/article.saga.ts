@@ -14,7 +14,7 @@ export class ArticleSagas {
       ofType(UpdateNameArticleEvent),
       delay(1000),
       map((event) => {
-        console.log(clc.blue('Saga running! ,', event));
+        console.log(clc.blue('Saga running! ,', JSON.stringify(event)));
       }),
     );
   };

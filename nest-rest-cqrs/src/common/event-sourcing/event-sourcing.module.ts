@@ -1,12 +1,14 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Global, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { EventStoreService } from './event-store.service';
-import { EventProcessingService } from './event-processing.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EventSourcingEntity } from './entity/event-sourcing.entity';
 import { EventProcessingAttemptEntity } from './entity/event-processcing-attempt.entity';
+import { EventSourcingEntity } from './entity/event-sourcing.entity';
+import { EventProcessingService } from './event-processing.service';
 import { EventSourcingController } from './event-sourcing.controller';
+import { EventStore } from './event-store';
+import { EventStoreService } from './event-store.service';
 
+@Global()
 @Module({
   imports: [
     CqrsModule,
@@ -16,7 +18,21 @@ import { EventSourcingController } from './event-sourcing.controller';
     ]),
   ],
   controllers: [EventSourcingController],
-  providers: [EventProcessingService, EventStoreService],
-  exports: [EventProcessingService, EventStoreService],
+  providers: [EventStoreService],
+  exports: [EventStoreService],
 })
-export class EventSourcingModule {}
+export class EventSourcingModule {
+  static forRoot(): DynamicModule {
+    return {
+      module: EventSourcingModule,
+    };
+  }
+
+  static forFeature(): DynamicModule {
+    return {
+      module: EventSourcingModule,
+      providers: [EventStoreService, EventProcessingService, EventStore],
+      exports: [EventStoreService, EventProcessingService, EventStore],
+    };
+  }
+}

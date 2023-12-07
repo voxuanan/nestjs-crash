@@ -1,6 +1,8 @@
-import { Logger, Module, Provider } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { Logger, Module, OnModuleInit, Provider } from '@nestjs/common';
+import { CqrsModule, EventBus } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventSourcingModule } from 'src/common/event-sourcing/event-sourcing.module';
+import { EventStore } from 'src/common/event-sourcing/event-store';
 import { HelperModule } from 'src/common/helper/helper.module';
 import { KafkaModule } from 'src/common/kafka/kafka.module';
 import { ArticleController } from './article.controller';
@@ -9,14 +11,13 @@ import { CreateArticleHandler } from './cqrs/application/command/article.create.
 import { UpdateNameArticleHandler } from './cqrs/application/command/article.update-name.handler';
 import { NameUpdatedEventHandler } from './cqrs/application/event/article.update-name.event.handler';
 import { FindOneArticleHandler } from './cqrs/application/query/article.find-one.handler';
+import { FindArticleHandler } from './cqrs/application/query/article.find.handler';
+import { GetTotalArticleHandler } from './cqrs/application/query/article.get-total.handler';
 import { ArticleFactory } from './cqrs/domain/article.factory';
+import { ArticleSagas } from './cqrs/infrastructure/article.saga';
 import { ArticleEntity } from './cqrs/infrastructure/entity/article.entity';
 import { ArticleQuery } from './cqrs/infrastructure/query/article.query';
 import { ArticleRepository } from './cqrs/infrastructure/repository/article.repository';
-import { FindArticleHandler } from './cqrs/application/query/article.find.handler';
-import { GetTotalArticleHandler } from './cqrs/application/query/article.get-total.handler';
-import { ArticleSagas } from './cqrs/infrastructure/article.saga';
-import { EventSourcingModule } from 'src/common/event-sourcing/event-sourcing.module';
 
 const infrastructure: Provider[] = [ArticleRepository, ArticleQuery];
 
@@ -39,7 +40,7 @@ const domain = [ArticleFactory];
     KafkaModule,
     HelperModule,
     TypeOrmModule.forFeature([ArticleEntity]),
-    EventSourcingModule,
+    EventSourcingModule.forFeature(),
     CqrsModule,
   ],
   controllers: [ArticleController, ArticleIntegrationController],
@@ -51,4 +52,14 @@ const domain = [ArticleFactory];
     ArticleSagas,
   ],
 })
-export class ArticleModule {}
+export class ArticleModule implements OnModuleInit {
+  constructor(
+    private readonly eventStore: EventStore,
+    private readonly eventBus: EventBus,
+  ) {}
+
+  onModuleInit() {
+    this.eventStore.bridgeEventsTo(this.eventBus.subject$);
+    this.eventBus.publisher = this.eventStore;
+  }
+}

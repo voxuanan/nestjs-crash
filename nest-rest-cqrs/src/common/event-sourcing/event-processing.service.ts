@@ -33,13 +33,28 @@ export class EventProcessingService {
   async processEvent<T>(
     eventId: string,
     processorName: string,
-  ): Promise<{ attemptId: string; eventId: string; processorName: string }> {
+    callback: () => Promise<T>,
+  ): Promise<T> {
     const { attemptId } = await this.startEventProcessingAttempt({
       eventId,
       processorName,
     });
 
-    return { attemptId, eventId, processorName };
+    try {
+      const result = await callback();
+      await this.reportSuccessfulEventProcessingAttempt({
+        attemptId,
+      });
+
+      return result;
+    } catch (error) {
+      await this.reportFailedEventProcessingAttempt({
+        attemptId,
+        error: error.toString(),
+      });
+
+      throw error;
+    }
   }
 
   async startEventProcessingAttempt({

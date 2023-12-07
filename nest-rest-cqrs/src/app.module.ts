@@ -15,7 +15,7 @@ import { LogModule } from './test/cqrs/application/command/test.module';
       isGlobal: true,
     }),
     CommonModule,
-    EventSourcingModule,
+    EventSourcingModule.forRoot(),
     KafkaModule,
     ArticleModule,
     LogModule,
