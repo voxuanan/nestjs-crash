@@ -1,5 +1,10 @@
 # Nest CQRS Rest api
 
+### Note
+
+May be we should produce kafka inside event sourcing <(")
+This repo based on: https://github.com/kyhsa93/nestjs-rest-cqrs-example (change sqs to kafka, use event sourcing?)
+
 ### Purpose of this Repository
 
 This is a main goals of this repository:
@@ -86,6 +91,6 @@ Please refer to the image below.[[image source]](http://seedstack.org/docs/busin
 
 ## Getting started
 
-This is REST api made by node.js, nest, redis, mysql with typescript.
+This is REST api made by node.js, nest, mysql with typescript.
 
-So you have to get node.js environment, redis for cache, mysql for database, know typescript syntax.
+So you have to get node.js environment, mysql for database, know typescript syntax.

@@ -31,8 +31,8 @@ export class EventSourcingModule {
   static forFeature(): DynamicModule {
     return {
       module: EventSourcingModule,
-      providers: [EventStoreService, EventProcessingService, EventStore],
-      exports: [EventStoreService, EventProcessingService, EventStore],
+      providers: [EventProcessingService, EventStore],
+      exports: [EventProcessingService, EventStore],
     };
   }
 }
