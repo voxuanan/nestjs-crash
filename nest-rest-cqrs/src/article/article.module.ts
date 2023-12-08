@@ -42,7 +42,7 @@ const domain = [ArticleFactory];
     KafkaModule,
     HelperModule,
     TypeOrmModule.forFeature([ArticleEntity]),
-    EventSourcingModule.forFeature(),
+    EventSourcingModule,
     CqrsModule,
   ],
   controllers: [ArticleController, ArticleIntegrationController],
@@ -54,14 +54,4 @@ const domain = [ArticleFactory];
     ArticleSagas,
   ],
 })
-export class ArticleModule implements OnModuleInit {
-  constructor(
-    private readonly eventStore: EventStore,
-    private readonly eventBus: EventBus,
-  ) {}
-
-  onModuleInit() {
-    this.eventStore.bridgeEventsTo(this.eventBus.subject$);
-    this.eventBus.publisher = this.eventStore;
-  }
-}
+export class ArticleModule {}

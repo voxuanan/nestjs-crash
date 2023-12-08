@@ -29,9 +29,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     private readonly eventProcessingService: EventProcessingService,
   ) {
     this.eventBus.pipe(takeUntil(this.destroy$)).subscribe(async (event) => {
-      if (!(event as any).oldProcess) {
-        await this.store(event as IEvent & { id: string });
-      }
+      await this.store(event as IEvent & { id: string });
     });
 
     this.unhandledExceptionsBus

@@ -21,20 +21,20 @@ export class MigrationTestSeed {
       {
         id: '1',
         name: 'string1',
-        mapData: 'test1',
+        mapData: 'Anh An em fan anh',
       },
       {
         id: '2',
         name: 'string2',
-        mapData: 'test2',
+        mapData: 'An An dep trai bo doi qua',
       },
       {
         id: '3',
         name: 'string3',
-        mapData: 'test3',
+        mapData: 'Va do la em An',
       },
       {
-        id: '0',
+        id: '4',
         name: 'string',
         mapData: 'Anh An Dep Trai Vo Dich Vu Tru, aaaaaaaaaaa em ra em ra',
       },

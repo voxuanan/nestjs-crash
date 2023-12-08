@@ -18,21 +18,7 @@ import { EventStoreService } from './event-store.service';
     ]),
   ],
   controllers: [EventSourcingController],
-  providers: [EventStoreService],
-  exports: [EventStoreService],
+  providers: [EventStoreService, EventProcessingService, EventStore],
+  exports: [EventStoreService, EventProcessingService, EventStore],
 })
-export class EventSourcingModule {
-  static forRoot(): DynamicModule {
-    return {
-      module: EventSourcingModule,
-    };
-  }
-
-  static forFeature(): DynamicModule {
-    return {
-      module: EventSourcingModule,
-      providers: [EventProcessingService, EventStore],
-      exports: [EventProcessingService, EventStore],
-    };
-  }
-}
+export class EventSourcingModule {}
