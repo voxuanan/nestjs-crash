@@ -20,32 +20,43 @@ services:
     networks:
       - nestjs-rest-cqrs
 
-  mysqldb:
-    container_name: mysqldb
-    image: mysql:latest
-    restart: always
-    ports:
-      - '3306:3306'
+  postgres:
+    container_name: postgres_container
+    image: postgres
     environment:
-      MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: test
-      MYSQL_USER: test
-      MYSQL_PASSWORD: 123456
-    command: mysqld --innodb-default-row-format=DYNAMIC --innodb-log-file-size=256M --innodb-strict-mode=0 --character-set-server=latin1 --collation-server=latin1_swedish_ci
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-test}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - '5432:5432'
     networks:
       - nestjs-rest-cqrs
+    restart: unless-stopped
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    restart: always
-    ports:
-      - 8080:80
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
     environment:
-      PMA_HOST: mysqldb
-      MYSQL_ROOT_PASSWORD: 123456
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - '${PGADMIN_PORT:-5050}:80'
     networks:
       - nestjs-rest-cqrs
+    restart: always
+    depends_on:
+      - postgres
 
 networks:
   nestjs-rest-cqrs:
     driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:

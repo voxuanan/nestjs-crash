@@ -18,6 +18,7 @@ import { ArticleSagas } from './cqrs/infrastructure/article.saga';
 import { ArticleEntity } from './cqrs/infrastructure/entity/article.entity';
 import { ArticleQuery } from './cqrs/infrastructure/query/article.query';
 import { ArticleRepository } from './cqrs/infrastructure/repository/article.repository';
+import { CreateArticleEventHandler } from './cqrs/application/event/article.create-name.event.handler';
 
 const infrastructure: Provider[] = [ArticleRepository, ArticleQuery];
 
@@ -30,6 +31,7 @@ const application = [
   FindArticleHandler,
   FindOneArticleHandler,
   //Event
+  CreateArticleEventHandler,
   NameUpdatedEventHandler,
 ];
 

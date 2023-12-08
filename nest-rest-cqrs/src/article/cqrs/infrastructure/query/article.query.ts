@@ -1,10 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IArticleQuery } from '../../application/query/article.query';
-import { ArticleFindOneResult } from 'src/article/interfaces/article.find-one.interface';
 import { readConnection } from 'src/common/common.module';
 import { ArticleEntity } from '../entity/article.entity';
 import { FindArticleQuery } from '../../application/query/article.find.query';
-import { ArticleFindResult } from 'src/article/interfaces/article.find.interface';
+import {
+  ArticleFindOneResult,
+  ArticleFindResult,
+} from 'src/article/interfaces/article.interface';
 
 @Injectable()
 export class ArticleQuery implements IArticleQuery {
@@ -33,7 +35,7 @@ export class ArticleQuery implements IArticleQuery {
       .getRepository(ArticleEntity)
       .find({
         skip: query.skip,
-        take: query.skip,
+        take: query.take,
       })
       .then((entities) => ({
         data: entities.map((entity) => ({

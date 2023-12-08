@@ -18,6 +18,6 @@
     "moduleResolution": "node",
     "resolveJsonModule": true
   },
-  "include": ["src", "test"],
+  "include": ["src", "test", "src/common/event/domain/event/.ts"],
   "exclude": ["node_modules", "dist", "*coverage", "logs", "data"]
 }

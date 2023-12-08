@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { FindArticleQuery } from './article.find.query';
-import { ArticleFindResult } from 'src/article/interfaces/article.find.interface';
+import { ArticleFindResult } from 'src/article/interfaces/article.interface';
 import { ArticleQuery } from '../../infrastructure/query/article.query';
 import { GetTotalArticleQuery } from './article.get-total.query';
 

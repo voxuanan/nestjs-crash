@@ -7,7 +7,7 @@ import { CommonModule } from './common/common.module';
 import { EventSourcingModule } from './common/event-sourcing/event-sourcing.module';
 import { KafkaModule } from './common/kafka/kafka.module';
 import { RequestStorageMiddleware } from './common/request-storage/request-storage.middleware';
-import { LogModule } from './test/test.module';
+import { TestModule } from './test/test.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { LogModule } from './test/test.module';
     EventSourcingModule.forRoot(),
     KafkaModule,
     ArticleModule,
-    LogModule,
+    TestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

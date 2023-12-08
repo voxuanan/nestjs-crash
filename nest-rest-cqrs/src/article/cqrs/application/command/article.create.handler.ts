@@ -1,9 +1,8 @@
-import { Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Transactional } from 'src/common/request-storage/transactional';
-import { CreateArticleCommand } from './article.create.command';
-import { ArticleRepository } from '../../infrastructure/repository/article.repository';
 import { ArticleFactory } from '../../domain/article.factory';
+import { ArticleRepository } from '../../infrastructure/repository/article.repository';
+import { CreateArticleCommand } from './article.create.command';
 
 @CommandHandler(CreateArticleCommand)
 export class CreateArticleHandler
@@ -20,6 +19,8 @@ export class CreateArticleHandler
       ...command,
       id: await this.articleRepository.newId(),
     });
+
+    article.create(command.name);
 
     await this.articleRepository.save(article);
 

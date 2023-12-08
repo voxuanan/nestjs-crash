@@ -1,5 +1,6 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { UpdateNameArticleEvent } from './event/article.update';
+import { UpdateNameArticleEvent } from './event/article.update.event';
+import { CreateArticleEvent } from './event/article.create.event';
 
 export type ArticleEssentialProperties = Readonly<
   Required<{
@@ -19,6 +20,7 @@ export type ArticleProperties = ArticleEssentialProperties &
   Required<ArticleOptionalProperties>;
 
 export interface IArticle {
+  create: (name: string) => void;
   updateName: (name: string) => void;
   commit: () => void;
 }
@@ -38,5 +40,9 @@ export class ArticleImplement extends AggregateRoot implements IArticle {
     this.name = name;
     this.updatedAt = new Date();
     this.apply(new UpdateNameArticleEvent(this.id, this.name));
+  }
+
+  create(name: string): void {
+    this.apply(new CreateArticleEvent(this.id, name));
   }
 }

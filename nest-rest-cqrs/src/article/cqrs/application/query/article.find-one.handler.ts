@@ -3,9 +3,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
-import { ArticleFindOneResult } from 'src/article/interfaces/article.find-one.interface';
 import { ArticleQuery } from '../../infrastructure/query/article.query';
 import { FindOneArticleQuery } from './article.find-one.query';
+import { ArticleFindOneResult } from 'src/article/interfaces/article.interface';
 
 @QueryHandler(FindOneArticleQuery)
 export class FindOneArticleHandler
@@ -15,7 +15,7 @@ export class FindOneArticleHandler
 
   async execute(query: FindOneArticleQuery): Promise<ArticleFindOneResult> {
     const data = await this.articleQuery.findById(query.id);
-    if (!data) throw new NotFoundException('Account is not found');
+    if (!data) throw new NotFoundException('Article not found');
 
     return data;
   }

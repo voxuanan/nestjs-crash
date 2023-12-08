@@ -1,5 +1,7 @@
-import { ArticleFindOneResult } from 'src/article/interfaces/article.find-one.interface';
-import { ArticleFindResult } from 'src/article/interfaces/article.find.interface';
+import {
+  ArticleFindOneResult,
+  ArticleFindResult,
+} from 'src/article/interfaces/article.interface';
 import { FindArticleQuery } from './article.find.query';
 
 export interface IArticleQuery {

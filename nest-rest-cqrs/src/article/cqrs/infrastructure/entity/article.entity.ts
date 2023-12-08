@@ -7,7 +7,7 @@ import {
   BaseEntity,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'articles' })
 export class ArticleEntity extends BaseEntity {
   constructor(partial: Partial<ArticleEntity>) {
     super();

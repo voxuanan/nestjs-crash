@@ -1,16 +1,13 @@
 import {
-  Entity,
-  Column,
-  PrimaryColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
   BaseEntity,
-  OneToOne,
-  JoinColumn,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import { EventProcessingAttemptEntity } from './event-processcing-attempt.entity';
 
-@Entity()
+@Entity({ name: 'event-sourcing' })
 export class EventSourcingEntity extends BaseEntity {
   constructor(partial: Partial<EventSourcingEntity>) {
     super();

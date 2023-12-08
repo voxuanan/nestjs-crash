@@ -18,6 +18,9 @@ import {
 import { HelperModule } from './helper/helper.module';
 import { EventSourcingEntity } from './event-sourcing/entity/event-sourcing.entity';
 import { EventProcessingAttemptEntity } from './event-sourcing/entity/event-processcing-attempt.entity';
+import { TestEntity } from 'src/test/cqrs/infrastructure/entity/test.entity';
+import { ArticlWithMapDataeMaterializedView } from './common-cqrs/application/view/article-with-map-data.materialized-view.entity';
+import { CqrsCommonModule } from './common-cqrs/cqrs.common.module';
 
 interface WriteConnection {
   readonly startTransaction: (
@@ -78,8 +81,11 @@ export let readConnection = {} as ReadConnection;
             ArticleEntity,
             EventSourcingEntity,
             EventProcessingAttemptEntity,
+            TestEntity,
+            //View
+            ArticlWithMapDataeMaterializedView,
           ],
-          type: 'mysql',
+          type: 'postgres',
           host: configService.get<string>('database.host'),
           port: configService.get<number>('database.port'),
           username: configService.get<string>('database.username'),
@@ -87,7 +93,7 @@ export let readConnection = {} as ReadConnection;
           database: configService.get<string>('database.name'),
           migrationsRun: true,
           logging: configService.get<boolean>('database.logging'),
-          driver: require('mysql2'),
+          driver: require('pg'),
           synchronize: true,
         };
       },
@@ -107,6 +113,7 @@ export let readConnection = {} as ReadConnection;
     ScheduleModule.forRoot(),
     CqrsModule,
     HelperModule,
+    CqrsCommonModule,
   ],
 })
 export class CommonModule {}

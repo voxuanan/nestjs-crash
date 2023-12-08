@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArticleFindOneResult } from '../article.find-one.interface';
+import { ArticleFindOneResult } from '../article.interface';
 
 export class ArticleFindOneSerializer extends ArticleFindOneResult {
   @ApiProperty()

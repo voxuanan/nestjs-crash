@@ -1,3 +1,4 @@
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import {
   Body,
   Controller,
@@ -17,18 +18,17 @@ import {
   ApiTags,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { FindPaginationInputDTO } from 'src/common/helper/dtos/find-pagination.dto';
 import { FindOneInputDTO } from '../common/helper/dtos/find-one.dto';
 import { CreateArticleCommand } from './cqrs/application/command/article.create.command';
 import { UpdateNameArticleCommand } from './cqrs/application/command/article.update-name.command';
+import { FindOneArticleQuery } from './cqrs/application/query/article.find-one.query';
+import { FindArticleQuery } from './cqrs/application/query/article.find.query';
+import { GetTotalArticleQuery } from './cqrs/application/query/article.get-total.query';
 import { CreateArticleRequestDTO } from './interfaces/dtos/article.create.dto';
 import { UpdateNameArticleRequestDTO } from './interfaces/dtos/article.update-name.dto';
 import { ArticleFindOneSerializer } from './interfaces/serializers/article.find-one.serializer';
-import { FindOneArticleQuery } from './cqrs/application/query/article.find-one.query';
-import { CacheInterceptor } from '@nestjs/cache-manager';
-import { FindPaginationInputDTO } from 'src/common/helper/dtos/find-pagination.dto';
 import { ArticleFindSerializer } from './interfaces/serializers/article.find.serializer';
-import { FindArticleQuery } from './cqrs/application/query/article.find.query';
-import { GetTotalArticleQuery } from './cqrs/application/query/article.get-total.query';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -45,7 +45,7 @@ export class ArticleController {
   })
   @ApiBadRequestResponse({})
   @ApiInternalServerErrorResponse({})
-  async findAccounts(
+  async find(
     @Query() querystring: FindPaginationInputDTO,
   ): Promise<ArticleFindSerializer> {
     const query = new FindArticleQuery(querystring);

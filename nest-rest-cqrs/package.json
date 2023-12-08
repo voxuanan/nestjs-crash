@@ -18,6 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
+    "test:create": "nestjs-command insert:test",
     "kafka:create-topics": "nestjs-command insert:kafka-topics",
     "kafka:delete-topics": "nestjs-command remove:kafka-topics"
   },
@@ -45,6 +46,7 @@
     "moment": "^2.29.4",
     "mysql2": "^3.6.5",
     "nestjs-command": "^3.1.4",
+    "pg": "^8.11.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
     "typeorm": "^0.3.17",

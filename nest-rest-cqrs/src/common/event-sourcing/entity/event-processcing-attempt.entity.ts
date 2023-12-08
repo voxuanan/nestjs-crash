@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ENUM_EVENT_PROCESSING_STATUS } from '../contants/event-sourcing.enum';
 
-@Entity()
+@Entity({ name: 'event-processing' })
 export class EventProcessingAttemptEntity extends BaseEntity {
   constructor(partial: Partial<EventProcessingAttemptEntity>) {
     super();
