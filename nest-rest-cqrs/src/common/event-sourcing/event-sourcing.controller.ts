@@ -3,7 +3,6 @@ import { EventBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { prepareEvent } from './contants/event.sourcing.func.contant';
 import { EventSouringSearchDto } from './dtos/event-sourcing.search.dto';
-import { EventStore } from './event-store';
 import { EventStoreService } from './event-store.service';
 
 @ApiTags('Events')

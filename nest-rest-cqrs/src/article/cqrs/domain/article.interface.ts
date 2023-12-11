@@ -1,6 +1,6 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { UpdateNameArticleEvent } from './event/article.update.event';
 import { CreateArticleEvent } from './event/article.create.event';
+import { UpdateNameArticleEvent } from './event/article.update.event';
 
 export type ArticleEssentialProperties = Readonly<
   Required<{

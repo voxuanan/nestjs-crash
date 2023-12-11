@@ -14,17 +14,17 @@ export class EventStoreService {
     (EventSourcingEntity & { processAttempt: EventProcessingAttemptEntity })[]
   > {
     const records = await readConnection
-      .createQueryBuilder(EventSourcingEntity, 'event')
+      .createQueryBuilder(EventSourcingEntity, 'event-sourcing')
       .leftJoinAndMapOne(
-        'event.processAttempt',
+        'event-sourcing.processAttempt',
         EventProcessingAttemptEntity,
-        'processAttempt',
-        'event.id = processAttempt.eventId',
+        'event-processing',
+        'event-sourcing.id = event-processing.eventId',
       )
-      .where('event.createdAt > :timeThreshold', {
+      .where('event-sourcing.createdAt > :timeThreshold', {
         timeThreshold: this.helperDateService.create(timestamp),
       })
-      .orderBy('event.createdAt', 'ASC')
+      .orderBy('event-sourcing.createdAt', 'ASC')
       .getMany();
 
     return records as unknown as (EventSourcingEntity & {

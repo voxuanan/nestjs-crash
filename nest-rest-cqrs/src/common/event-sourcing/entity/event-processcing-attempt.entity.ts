@@ -20,7 +20,7 @@ export class EventProcessingAttemptEntity extends BaseEntity {
   @Column()
   processorName: string;
 
-  @Column()
+  @Column('uuid')
   eventId: string;
 
   @Column({ type: 'enum', enum: ENUM_EVENT_PROCESSING_STATUS })
