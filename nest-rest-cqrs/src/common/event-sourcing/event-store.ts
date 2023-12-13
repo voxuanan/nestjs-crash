@@ -29,7 +29,7 @@ export class EventStore implements IEventPublisher, IMessageSource {
     private readonly eventProcessingService: EventProcessingService,
   ) {
     this.eventBus.pipe(takeUntil(this.destroy$)).subscribe(async (event) => {
-      await this.store(event as IEvent & { id: string });
+      await this.store(event as IEvent & { id: string; aggregateId: string });
     });
 
     this.unhandledExceptionsBus
@@ -69,10 +69,11 @@ export class EventStore implements IEventPublisher, IMessageSource {
     this.subject$ = subject;
   }
 
-  private async store(event: IEvent & { id: string }) {
-    const { id, ...data } = event;
+  private async store(event: IEvent & { id: string; aggregateId: string }) {
+    const { id, aggregateId, ...data } = event;
     const create = new EventSourcingEntity({
       id,
+      aggregateId,
       data: JSON.stringify(data),
       name: event.constructor.name,
     });

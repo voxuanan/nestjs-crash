@@ -20,6 +20,9 @@ export class EventSourcingEntity extends BaseEntity {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  aggregateId?: string;
+
   @Column({ type: 'json' })
   data: string;
 

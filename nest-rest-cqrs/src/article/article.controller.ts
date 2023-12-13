@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   UseInterceptors,
 } from '@nestjs/common';
@@ -84,7 +85,7 @@ export class ArticleController {
     await this.commandBus.execute(command);
   }
 
-  @Post(':id')
+  @Put(':id')
   @ApiResponse({
     status: HttpStatus.CREATED,
   })

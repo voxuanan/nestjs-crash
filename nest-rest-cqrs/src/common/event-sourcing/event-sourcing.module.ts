@@ -7,6 +7,7 @@ import { EventProcessingService } from './event-processing.service';
 import { EventSourcingController } from './event-sourcing.controller';
 import { EventStore } from './event-store';
 import { EventStoreService } from './event-store.service';
+import { ArticleProjectionStrategy } from 'src/article/article.projection';
 
 @Global()
 @Module({
@@ -18,7 +19,17 @@ import { EventStoreService } from './event-store.service';
     ]),
   ],
   controllers: [EventSourcingController],
-  providers: [EventStoreService, EventProcessingService, EventStore],
-  exports: [EventStoreService, EventProcessingService, EventStore],
+  providers: [
+    EventStoreService,
+    EventProcessingService,
+    EventStore,
+    ArticleProjectionStrategy,
+  ],
+  exports: [
+    EventStoreService,
+    EventProcessingService,
+    EventStore,
+    ArticleProjectionStrategy,
+  ],
 })
 export class EventSourcingModule {}
