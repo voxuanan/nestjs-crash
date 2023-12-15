@@ -15,8 +15,6 @@ import {
   SelectQueryBuilder,
 } from 'typeorm';
 import { HelperModule } from './helper/helper.module';
-import { EventSourcingEntity } from './event-sourcing/entity/event-sourcing.entity';
-import { EventProcessingAttemptEntity } from './event-sourcing/entity/event-processcing-attempt.entity';
 import { TestEntity } from 'src/test/cqrs/infrastructure/entity/test.entity';
 import { ArticlWithMapDataeMaterializedView } from './common-cqrs/application/view/article-with-map-data.materialized-view.entity';
 import { CqrsCommonModule } from './common-cqrs/cqrs.common.module';
@@ -78,8 +76,6 @@ export let readConnection = {} as ReadConnection;
           autoLoadEntities: true,
           entities: [
             ArticleEntity,
-            EventSourcingEntity,
-            EventProcessingAttemptEntity,
             TestEntity,
             //View
             ArticlWithMapDataeMaterializedView,

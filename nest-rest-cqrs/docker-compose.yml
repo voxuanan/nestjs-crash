@@ -54,7 +54,7 @@ services:
       - postgres
 
   eventstore.db:
-    image: eventstore/eventstore:23.10.0-bookworm-slim
+    image: eventstore/eventstore:release-4.1.0
     environment:
       - EVENTSTORE_CLUSTER_SIZE=1
       - EVENTSTORE_RUN_PROJECTIONS=All

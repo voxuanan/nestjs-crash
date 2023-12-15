@@ -5,9 +5,18 @@ import { MigrationKafkaTopicsSeed } from './seeds/migration.kafka-topics.seed';
 import { CommonModule } from 'src/common/common.module';
 import { TestModule } from 'src/test/test.module';
 import { MigrationTestSeed } from './seeds/test.seed';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [CommonModule, CommandModule, KafkaModule, TestModule],
+  imports: [
+    CacheModule.register({
+      isGlobal: true,
+    }),
+    CommonModule,
+    CommandModule,
+    KafkaModule,
+    TestModule,
+  ],
   providers: [MigrationKafkaTopicsSeed, MigrationTestSeed],
   exports: [],
 })

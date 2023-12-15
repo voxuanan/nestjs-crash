@@ -1,106 +1,110 @@
-import { Injectable } from '@nestjs/common';
-import {
-  EventBus,
-  IEvent,
-  IEventPublisher,
-  IMessageSource,
-  UnhandledExceptionBus,
-} from '@nestjs/cqrs';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Subject, takeUntil } from 'rxjs';
-import { Repository } from 'typeorm';
-import { readConnection } from '../common.module';
-import { HelperDateService } from '../helper/services/helper.date.service';
-import { EventProcessingAttemptEntity } from './entity/event-processcing-attempt.entity';
-import { EventSourcingEntity } from './entity/event-sourcing.entity';
-import { EventProcessingService } from './event-processing.service';
+import { Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { IEventPublisher } from '@nestjs/cqrs/dist/interfaces/events/event-publisher.interface';
+import { IEvent } from '@nestjs/cqrs/dist/interfaces/events/event.interface';
+import { IMessageSource } from '@nestjs/cqrs/dist/interfaces/events/message-source.interface';
+import * as http from 'http';
+import { Subject } from 'rxjs';
+import * as xml2js from 'xml2js';
 
-@Injectable()
+/**
+ * @class EventStore
+ * @description The EventStore.org bridge. By design, the domain category
+ * (i.e. user) events are being subscribed to. Upon events being received,
+ * internal event handlers are responsible for the handling of events.
+ */
 export class EventStore implements IEventPublisher, IMessageSource {
-  private subject$: Subject<any>;
-  private destroy$ = new Subject<void>();
+  private eventStore: any;
+  private eventHandlers: object;
+  private category: string;
+  private eventStoreHostUrl: string;
 
   constructor(
-    private readonly eventBus: EventBus,
-    private readonly unhandledExceptionsBus: UnhandledExceptionBus,
-    private readonly helperDateService: HelperDateService,
-    @InjectRepository(EventSourcingEntity)
-    private eventSourcingRepository: Repository<EventSourcingEntity>,
-    private readonly eventProcessingService: EventProcessingService,
+    @Inject('EVENT_STORE_PROVIDER') eventStore: any,
+    private readonly configService: ConfigService,
   ) {
-    this.eventBus.pipe(takeUntil(this.destroy$)).subscribe(async (event) => {
-      await this.store(event as IEvent & { id: string; aggregateId: string });
+    this.eventStore = eventStore;
+    this.eventStore.connect({
+      hostname: this.configService.get<string>('event-store.hostname'),
+      port: this.configService.get<string>('event-store.tcpPort'),
+      credentials: this.configService.get<string>('event-store.credentials'),
+      poolOptions: this.configService.get<string>('event-store.poolOptions'),
     });
-
-    this.unhandledExceptionsBus
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((exceptionInfo) => {
-        console.info('unhandled exception');
-        console.error(exceptionInfo);
-        return;
-      });
+    this.eventStoreHostUrl =
+      this.configService.get<string>('event-store.protocol') +
+      `://${this.configService.get<string>(
+        'event-store.hostname',
+      )}:${this.configService.get<string>(
+        'event-store.credentials.username',
+      )}@${this.configService.get<string>(
+        'event-store.credentials.password',
+      )}:${this.configService.get<string>('event-store.httpPort')}/streams/`;
   }
 
-  onModuleDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
+  async publish<T extends IEvent>(event: T) {
+    const message = JSON.parse(JSON.stringify(event));
 
-  publish<TEvent extends IEvent & { id?: string }>(
-    event: TEvent,
-    context?: unknown,
-  ) {
-    return this.eventProcessingService.processEvent(
-      event.id,
-      event.constructor.name,
-      async () => {
-        this.subject$.next(event);
-      },
-    );
-  }
-
-  publishAll?<TEvent extends IEvent>(events: TEvent[], context?: unknown) {
-    if (events.length != 0) {
-      events.forEach((event) => this.publish(event, context));
+    const id = message.id;
+    const streamName = `${this.category}-${id}`;
+    const type = event.constructor.name;
+    try {
+      await this.eventStore.client.writeEvent(streamName, type, event);
+    } catch (err) {
+      console.trace(err.message);
     }
   }
 
-  bridgeEventsTo<T extends IEvent>(subject: Subject<T>) {
-    this.subject$ = subject;
+  /**
+   * @description Event Store bridge subscribes to domain category stream
+   * @param subject
+   */
+  async bridgeEventsTo<T extends IEvent>(subject: Subject<T>) {
+    const streamName = `$ce-${this.category}`;
+    const onEvent = async (event) => {
+      const eventUrl =
+        this.eventStoreHostUrl +
+        `${event.metadata.$o}/${event.data.split('@')[0]}`;
+      http.get(eventUrl, (res) => {
+        res.setEncoding('utf8');
+        let rawData = '';
+        res.on('data', (chunk) => {
+          rawData += chunk;
+        });
+        res.on('end', () => {
+          xml2js.parseString(rawData, (err, result) => {
+            if (err) {
+              console.trace(err);
+              return;
+            }
+            const content = result['atom:entry']['atom:content'][0];
+            const eventType = content.eventType[0];
+            const data = content.data[0];
+            event = this.eventHandlers[eventType](...Object.values(data));
+            subject.next(event);
+          });
+        });
+      });
+    };
+    const onDropped = (subscription, reason, error) => {
+      console.trace(subscription, reason, error);
+    };
+    try {
+      await this.eventStore.client.subscribeToStream(
+        streamName,
+        onEvent,
+        onDropped,
+        false,
+      );
+    } catch (err) {
+      console.trace(err);
+    }
   }
 
-  private async store(event: IEvent & { id: string; aggregateId: string }) {
-    const { id, aggregateId, ...data } = event;
-    const create = new EventSourcingEntity({
-      id,
-      aggregateId,
-      data: JSON.stringify(data),
-      name: event.constructor.name,
-    });
-    this.eventSourcingRepository.create(create).save();
+  setEventHandlers(eventHandlers) {
+    this.eventHandlers = eventHandlers;
   }
 
-  public async getEvents(
-    timestamp: number = 0,
-  ): Promise<
-    (EventSourcingEntity & { processAttempt: EventProcessingAttemptEntity })[]
-  > {
-    const records = await readConnection
-      .createQueryBuilder(EventSourcingEntity, 'event')
-      .leftJoinAndMapOne(
-        'event.processAttempt',
-        EventProcessingAttemptEntity,
-        'processAttempt',
-        'event.id = processAttempt.eventId',
-      )
-      .where('event.createdAt > :timeThreshold', {
-        timeThreshold: this.helperDateService.create(timestamp),
-      })
-      .orderBy('event.createdAt', 'ASC')
-      .getMany();
-
-    return records as unknown as (EventSourcingEntity & {
-      processAttempt: EventProcessingAttemptEntity;
-    })[];
+  setCategory(category) {
+    this.category = category;
   }
 }

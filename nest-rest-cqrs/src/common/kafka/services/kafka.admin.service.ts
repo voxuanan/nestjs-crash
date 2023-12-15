@@ -17,6 +17,7 @@ export class KafkaJsAdmin implements IKafkaAdmin {
 
   async connect() {
     try {
+      await this.admin.connect();
     } catch (err) {
       await sleep(5000);
       await this.connect();

@@ -16,7 +16,7 @@ export class UpdateNameArticleHandler
 
   @Transactional()
   async execute(command: UpdateNameArticleCommand): Promise<void> {
-    const article = await this.articleRepository.findById(command.articleId);
+    const article = await this.articleRepository.findById(command.id);
 
     if (!article) throw new NotFoundException('not found');
 

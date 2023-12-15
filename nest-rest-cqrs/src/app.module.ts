@@ -1,24 +1,23 @@
 import { CacheModule } from '@nestjs/cache-manager';
-import { MiddlewareConsumer, Module, OnModuleInit } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArticleModule } from './article/article.module';
 import { CommonModule } from './common/common.module';
-import { EventSourcingModule } from './common/event-sourcing/event-sourcing.module';
+import { EventStoreModule } from './common/event-sourcing/event-store.module';
 import { KafkaModule } from './common/kafka/kafka.module';
-import { RequestStorageMiddleware } from './common/request-storage/request-storage.middleware';
 import { TestModule } from './test/test.module';
-import { EventStore } from './common/event-sourcing/event-store';
-import { CqrsModule, EventBus } from '@nestjs/cqrs';
+import { RequestStorageMiddleware } from './common/request-storage/request-storage.middleware';
 
 @Module({
   imports: [
     CacheModule.register({
       isGlobal: true,
     }),
+    EventStoreModule.forRoot(),
     CommonModule,
     CqrsModule,
-    EventSourcingModule,
     KafkaModule,
     ArticleModule,
     TestModule,
@@ -26,17 +25,7 @@ import { CqrsModule, EventBus } from '@nestjs/cqrs';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements OnModuleInit {
-  constructor(
-    private readonly eventBus: EventBus,
-    private readonly eventStore: EventStore,
-  ) {}
-
-  onModuleInit() {
-    this.eventStore.bridgeEventsTo(this.eventBus.subject$);
-    this.eventBus.publisher = this.eventStore;
-  }
-
+export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(RequestStorageMiddleware).forRoutes('*');
   }

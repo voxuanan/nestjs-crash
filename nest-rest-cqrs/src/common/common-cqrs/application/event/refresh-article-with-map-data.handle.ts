@@ -11,7 +11,7 @@ export class RefreshArticleWithMapDataHandler
     private readonly articleWithMapDataViewUpdater: ArticleWithMapDataViewUpdater,
   ) {}
 
-  @Transactional()
+  // @Transactional()
   async handle(event: any): Promise<void> {
     await this.articleWithMapDataViewUpdater.updateArticleView();
   }

@@ -1,7 +1,8 @@
-import { Logger, Module, Provider } from '@nestjs/common';
-import { CqrsModule } from '@nestjs/cqrs';
+import { Logger, Module, OnModuleInit, Provider } from '@nestjs/common';
+import { CommandBus, CqrsModule, EventBus } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EventSourcingModule } from 'src/common/event-sourcing/event-sourcing.module';
+import { EventStore } from 'src/common/event-sourcing/event-store';
+import { EventStoreModule } from 'src/common/event-sourcing/event-store.module';
 import { HelperModule } from 'src/common/helper/helper.module';
 import { KafkaModule } from 'src/common/kafka/kafka.module';
 import { ArticleController } from './article.controller';
@@ -21,17 +22,18 @@ import { ArticleRepository } from './cqrs/infrastructure/repository/article.repo
 
 const infrastructure: Provider[] = [ArticleRepository, ArticleQuery];
 
+const CommandHandlers = [CreateArticleHandler, UpdateNameArticleHandler];
+const EventHandlers = [CreateArticleEventHandler, NameUpdatedEventHandler];
+
 const application = [
   //Command
-  CreateArticleHandler,
-  UpdateNameArticleHandler,
+  ...CommandHandlers,
   //Query
   GetTotalArticleHandler,
   FindArticleHandler,
   FindOneArticleHandler,
   //Event
-  CreateArticleEventHandler,
-  NameUpdatedEventHandler,
+  ...EventHandlers,
 ];
 
 const domain = [ArticleFactory];
@@ -41,7 +43,7 @@ const domain = [ArticleFactory];
     KafkaModule,
     HelperModule,
     TypeOrmModule.forFeature([ArticleEntity]),
-    EventSourcingModule,
+    EventStoreModule.forFeature(),
     CqrsModule,
   ],
   controllers: [ArticleController, ArticleIntegrationController],
@@ -53,4 +55,20 @@ const domain = [ArticleFactory];
     ArticleSagas,
   ],
 })
-export class ArticleModule {}
+export class ArticleModule implements OnModuleInit {
+  constructor(
+    private readonly command$: CommandBus,
+    private readonly event$: EventBus,
+    private readonly eventStore: EventStore,
+  ) {}
+
+  onModuleInit() {
+    this.eventStore.setCategory('articles');
+    this.eventStore.setEventHandlers(EventHandlers);
+    this.eventStore.bridgeEventsTo((this.event$ as any).subject$);
+    this.event$.publisher = this.eventStore;
+    // /** ------------ */
+    this.event$.register(EventHandlers);
+    this.command$.register(CommandHandlers);
+  }
+}
